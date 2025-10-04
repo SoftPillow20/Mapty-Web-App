@@ -1,5 +1,5 @@
-import { Running } from '../js/models/running.js';
-import { Cycling } from '../js/models/cycling.js';
+import { Running } from './models/runningModel.js';
+import { Cycling } from './models/cyclingModel.js';
 
 ////////////////////////////////
 // APPLICATION ARCHITECTURE

@@ -1,4 +1,4 @@
-import { Workout } from './workout.js';
+import { Workout } from './workoutModel.js';
 
 export class Running extends Workout {
   type = 'running';
