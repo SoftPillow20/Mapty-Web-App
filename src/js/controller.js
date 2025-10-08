@@ -1,5 +1,7 @@
 import { Running } from './models/runningModel.js';
 import { Cycling } from './models/cyclingModel.js';
+import { Map } from './models/mapModel.js';
+import { renderMap } from './views/mapView.js';
 
 ////////////////////////////////
 // APPLICATION ARCHITECTURE
@@ -16,12 +18,15 @@ class App {
   #map;
   #mapEvent;
   #marker;
-  #mapZoomLevel = 13;
+
   #workouts = [];
 
   constructor() {
-    // Get user's position
-    this._getPosition();
+    // Initializes map object
+    this.#map = new Map();
+
+    // Load map on screen
+    this._loadMap();
 
     // Get data from local storage
     this._getLocalStorage();
@@ -32,38 +37,19 @@ class App {
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
-  _getPosition() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        this._loadMap.bind(this),
-        function () {
-          console.log('Could not get your position');
-        }
-      );
-    }
-  }
-
-  _loadMap(position) {
-    let { latitude, longitude } = position.coords;
-
-    const coordinates = [latitude, longitude];
-
-    // Set coordinates on the map
-    this.#map = L.map('map').setView(coordinates, this.#mapZoomLevel);
+  // Load the map (asynchronously)
+  async _loadMap() {
+    const map = await this.#map.mapPromise;
 
     // Render map on current location
-    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(this.#map);
+    renderMap(map);
 
     // Handling clicks on map
-    this.#map.on('click', this._showForm.bind(this));
-
-    this.#workouts.forEach(work => {
-      this._loadWorkoutMarker(work);
-      this._renderPopup(work);
-    });
+    // this.#map.on('click', this._showForm.bind(this));
+    // this.#workouts.forEach(work => {
+    //   this._loadWorkoutMarker(work);
+    //   this._renderPopup(work);
+    // });
   }
 
   _showForm(mapE) {
@@ -241,7 +227,7 @@ class App {
     );
     console.log(workout);
 
-    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+    this.#map.setView(workout.coords, this.#map.mapZoomLevel, {
       animate: true,
       pan: {
         duration: 1,
