@@ -2,6 +2,7 @@ import { Running } from './models/runningModel.js';
 import { Cycling } from './models/cyclingModel.js';
 import { Map } from './models/mapModel.js';
 import { renderMap } from './views/mapView.js';
+import { formViewRenderHandler, HideForm } from './views/formView.js';
 
 ////////////////////////////////
 // APPLICATION ARCHITECTURE
@@ -16,6 +17,8 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 class App {
   #map;
+  #mapObj;
+  #mapPromise;
   #mapEvent;
   #marker;
 
@@ -23,7 +26,7 @@ class App {
 
   constructor() {
     // Initializes map object
-    this.#map = new Map();
+    this.#mapObj = new Map();
 
     // Load map on screen
     this._loadMap();
@@ -39,13 +42,17 @@ class App {
 
   // Load the map (asynchronously)
   async _loadMap() {
-    const map = await this.#map.mapPromise;
+    this.#mapPromise = await this.#mapObj.mapPromise;
+
+    this.#map = await this.#mapPromise;
+    console.log(this.#map);
 
     // Render map on current location
-    renderMap(map);
+    renderMap(this.#map);
 
     // Handling clicks on map
-    // this.#map.on('click', this._showForm.bind(this));
+    formViewRenderHandler(this._showForm.bind(this), this.#map);
+
     // this.#workouts.forEach(work => {
     //   this._loadWorkoutMarker(work);
     //   this._renderPopup(work);
@@ -55,33 +62,16 @@ class App {
   _showForm(mapE) {
     this.#mapEvent = mapE;
     // render workout on map as marker
-    this._renderWorkoutMarker();
-    form.classList.remove('hidden');
-  }
+    const { lat, lng } = this.#mapEvent.latlng;
 
-  _hideForm() {
-    // Empty inputs
-    inputDistance.value =
-      inputDuration.value =
-      inputCadence.value =
-      inputElevation.value =
-        '';
-    // cancels out any transition no css
-    form.style.display = 'none';
-    form.classList.add('hidden');
-    setTimeout(() => (form.style.display = 'grid'), 1000);
+    this.#marker = L.marker([lat, lng]).addTo(this.#map);
+
+    formRemoveHiddenCl();
   }
 
   _loadWorkoutMarker(work) {
     if (!work) return;
-
     this.#marker = L.marker(work.coords).addTo(this.#map);
-  }
-
-  _renderWorkoutMarker() {
-    const { lat, lng } = this.#mapEvent.latlng;
-
-    this.#marker = L.marker([lat, lng]).addTo(this.#map);
   }
 
   _toggleElevationField() {
@@ -142,7 +132,7 @@ class App {
     this._renderWorkout(workout);
 
     // Hide form + clear input fields
-    this._hideForm();
+    HideForm();
 
     // Set local storage to all workouts
     this._setLocalStorage();
