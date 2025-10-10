@@ -1,62 +1,64 @@
+import { Workout } from './models/workoutModel.js';
 import { Running } from './models/runningModel.js';
 import { Cycling } from './models/cyclingModel.js';
 import { Map } from './models/mapModel.js';
 import { renderMap } from './views/mapView.js';
-import { formViewRenderHandler, HideForm } from './views/formView.js';
+import { Form } from './views/formView.js';
 
 ////////////////////////////////
 // APPLICATION ARCHITECTURE
 
-const form = document.querySelector('.form');
-const containerWorkouts = document.querySelector('.workouts');
-const inputType = document.querySelector('.form__input--type');
-const inputDistance = document.querySelector('.form__input--distance');
-const inputDuration = document.querySelector('.form__input--duration');
-const inputCadence = document.querySelector('.form__input--cadence');
-const inputElevation = document.querySelector('.form__input--elevation');
-
 class App {
   #map;
-  #mapObj;
   #mapPromise;
   #mapEvent;
   #marker;
-
-  #workouts = [];
+  #form;
+  #workoutCl;
+  #workouts;
 
   constructor() {
-    // Initializes map object
-    this.#mapObj = new Map();
+    // Initializes classes
+    this.#mapPromise = new Map().mapPromise;
+    this.#form = new Form();
+    this.#workoutCl = new Workout();
 
-    // Load map on screen
-    this._loadMap();
+    // When map loads,
+    this._loadMap().then(res => {
+      // handle click event
+      this.#form.viewRenderHandler(this._showForm.bind(this), res);
 
-    // Get data from local storage
-    this._getLocalStorage();
+      // load marker and popup
+      this.#workouts.forEach(work => {
+        this._loadWorkoutMarker(work);
+        this.#form.renderPopup(work, this.#marker);
+      });
+    });
+
+    // Get data from local storage and load workouts
+    this._loadWorkouts();
 
     // Attach event handlers
-    form.addEventListener('submit', this._newWorkout.bind(this));
-    inputType.addEventListener('change', this._toggleElevationField);
-    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    this.#form.submitRenderHandler(this._newWorkout.bind(this));
+    this.#form.inputTypeEventHandler();
+    this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
   }
 
   // Load the map (asynchronously)
   async _loadMap() {
-    this.#mapPromise = await this.#mapObj.mapPromise;
+    try {
+      this.#map = await this.#mapPromise;
 
-    this.#map = await this.#mapPromise;
-    console.log(this.#map);
+      if (!this.#map)
+        throw new Error('Something went wrong. Please try again later');
 
-    // Render map on current location
-    renderMap(this.#map);
+      // Render map on current location
+      renderMap(this.#map);
 
-    // Handling clicks on map
-    formViewRenderHandler(this._showForm.bind(this), this.#map);
-
-    // this.#workouts.forEach(work => {
-    //   this._loadWorkoutMarker(work);
-    //   this._renderPopup(work);
-    // });
+      return this.#map;
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   _showForm(mapE) {
@@ -66,7 +68,7 @@ class App {
 
     this.#marker = L.marker([lat, lng]).addTo(this.#map);
 
-    formRemoveHiddenCl();
+    this.#form.formRemoveHiddenCl();
   }
 
   _loadWorkoutMarker(work) {
@@ -74,9 +76,15 @@ class App {
     this.#marker = L.marker(work.coords).addTo(this.#map);
   }
 
-  _toggleElevationField() {
-    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
-    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+  // This gets executed from the very beginning
+  _loadWorkouts() {
+    this.#workouts = this.#workoutCl.getLocalStorage();
+
+    if (!this.#workouts) return;
+
+    this.#workouts.forEach(work => {
+      this.#form.renderWorkout(work);
+    });
   }
 
   _newWorkout(e) {
@@ -89,15 +97,16 @@ class App {
     e.preventDefault();
 
     // Get data from form
-    const type = inputType.value;
-    const distance = +inputDistance.value;
-    const duration = +inputDuration.value;
+    const type = this.#form.inputType.value;
+    const distance = +this.#form.inputDistance.value;
+    const duration = +this.#form.inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
     // If activity running, create running Object
     if (type === 'running') {
-      const cadence = +inputCadence.value;
+      const cadence = +this.#form.inputCadence.value;
+
       // Check if data is valid
       if (
         !validInputs(distance, duration, cadence) ||
@@ -109,7 +118,7 @@ class App {
     }
     // If workout cycling, create cycling object
     if (type === 'cycling') {
-      const elevation = +inputElevation.value;
+      const elevation = +this.#form.inputElevation.value;
 
       // Check if data is valid
       if (
@@ -121,90 +130,22 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
+    this.#workouts = this.#workoutCl.workouts;
+
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
 
     // Render popup on map as marker
-    this._renderPopup(workout);
+    this.#form.renderPopup(workout, this.#marker);
 
     // Render workout on list
-    this._renderWorkout(workout);
+    this.#form.renderWorkout(workout);
 
     // Hide form + clear input fields
-    HideForm();
+    this.#form.HideForm();
 
     // Set local storage to all workouts
-    this._setLocalStorage();
-  }
-
-  _renderPopup(workout) {
-    // Display popup text
-    this.#marker
-      .bindPopup(
-        L.popup({
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: `${workout.type}-popup`,
-        })
-      )
-      .setPopupContent(
-        `${workout.type === 'running' ? '🏃' : '🚴'} ${workout.description}`
-      )
-      .openPopup();
-  }
-
-  _renderWorkout(workout) {
-    let html = `
-      <li class="workout workout--${workout.type}" data-id="${workout.id}">
-        <h2 class="workout__title">${workout.description}</h2>
-        <div class="workout__details">
-          <span class="workout__icon">${
-            workout.type === 'running' ? '🏃' : '🚴'
-          }</span>
-          <span class="workout__value">${workout.distance}</span>
-          <span class="workout__unit">km</span>
-        </div>
-        <div class="workout__details">
-          <span class="workout__icon">⏱</span>
-          <span class="workout__value">${workout.duration}</span>
-          <span class="workout__unit">min</span>
-        </div>
-    `;
-
-    if (workout.type === 'running')
-      html += `
-        <div class="workout__details">
-          <span class="workout__icon">⚡️</span>
-          <span class="workout__value">${workout.pace.toFixed(1)}</span>
-          <span class="workout__unit">min/km</span>
-        </div>
-        <div class="workout__details">
-          <span class="workout__icon">🦶🏼</span>
-          <span class="workout__value">${workout.cadence}</span>
-          <span class="workout__unit">spm</span>
-        </div>
-      </li>
-    `;
-
-    if (workout.type === 'cycling')
-      html += `
-        <div class="workout__details">
-          <span class="workout__icon">⚡️</span>
-          <span class="workout__value">${workout.speed.toFixed(1)}</span>
-          <span class="workout__unit">km/h</span>
-        </div>
-        <div class="workout__details">
-          <span class="workout__icon">⛰</span>
-          <span class="workout__value">${workout.elevationGain}</span>
-          <span class="workout__unit">m</span>
-        </div>
-      </li>
-    `;
-
-    form.insertAdjacentHTML('afterend', html);
+    this.#workoutCl.setLocalStorage();
   }
 
   _moveToPopup(e) {
@@ -215,7 +156,6 @@ class App {
     const workout = this.#workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-    console.log(workout);
 
     this.#map.setView(workout.coords, this.#map.mapZoomLevel, {
       animate: true,
@@ -226,23 +166,6 @@ class App {
 
     // using the public interface
     // workout.click();
-  }
-
-  _setLocalStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
-  }
-
-  // This gets executed from the very beginning
-  _getLocalStorage() {
-    const data = JSON.parse(localStorage.getItem('workouts'));
-
-    if (!data) return;
-
-    this.#workouts = data;
-
-    this.#workouts.forEach(work => {
-      this._renderWorkout(work);
-    });
   }
 
   reset() {

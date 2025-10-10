@@ -7,6 +7,7 @@ export class Workout {
     this.coords = coords; // [lat, lng]
     this.distance = distance; // in km
     this.duration = duration; // in min
+    this.workouts = [];
   }
 
   _setDescription() {
@@ -16,6 +17,16 @@ export class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
+  }
+
+  setLocalStorage() {
+    console.log(this.workouts);
+    localStorage.setItem('workouts', JSON.stringify(this.workouts));
+  }
+
+  getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    return data;
   }
 
   click() {
