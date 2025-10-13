@@ -13,6 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
+  #zoomLevel = 20;
   #form;
   #workoutCl;
   #workouts;
@@ -28,20 +29,14 @@ class App {
       // handle click event
       this.#form.viewRenderHandler(this._showForm.bind(this), res);
 
-      // load marker and popup
-      this.#workouts.forEach(work => {
-        this._loadWorkoutMarker(work);
-        this.#form.renderPopup(work, this.#marker);
-      });
+      // Get data from local storage and load workouts
+      this._loadWorkouts();
+
+      // Attach event handlers
+      this.#form.submitRenderHandler(this._newWorkout.bind(this));
+      this.#form.inputTypeEventHandler();
+      this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
     });
-
-    // Get data from local storage and load workouts
-    this._loadWorkouts();
-
-    // Attach event handlers
-    this.#form.submitRenderHandler(this._newWorkout.bind(this));
-    this.#form.inputTypeEventHandler();
-    this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
   }
 
   // Load the map (asynchronously)
@@ -82,7 +77,11 @@ class App {
 
     if (!this.#workouts) return;
 
+    this.#workoutCl.workouts.push(...this.#workouts);
+
     this.#workouts.forEach(work => {
+      this._loadWorkoutMarker(work);
+      this.#form.renderPopup(work, this.#marker);
       this.#form.renderWorkout(work);
     });
   }
@@ -130,10 +129,8 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
-    this.#workouts = this.#workoutCl.workouts;
-
     // Add new object to workout array
-    this.#workouts.push(workout);
+    this.#workoutCl.workouts.push(workout);
 
     // Render popup on map as marker
     this.#form.renderPopup(workout, this.#marker);
@@ -157,7 +154,7 @@ class App {
       work => work.id === workoutEl.dataset.id
     );
 
-    this.#map.setView(workout.coords, this.#map.mapZoomLevel, {
+    this.#map.setView(workout.coords, this.#zoomLevel, {
       animate: true,
       pan: {
         duration: 1,
