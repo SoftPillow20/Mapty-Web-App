@@ -171,6 +171,32 @@ a:visited {
   display: none;
 }
 
+.options {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.options__sort {
+  font-size: 1.6rem;
+}
+
+.sort {
+  width: auto;
+  margin-left: 1.2rem;
+}
+
+.btn {
+  display: inline-block;
+  font-family: inherit;
+  color: #fff;
+  background-color: #42484d;
+  font-size: 1.4em;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .copyright {
   margin-top: auto;
   font-size: 1.3rem;
@@ -187,6 +213,10 @@ a:visited {
 .twitter-link:hover,
 .twitter-link:active {
   color: var(--color-light--2);
+}
+
+.margin-bottom--sm {
+  margin-bottom: 1.2rem;
 }
 
 /* MAP */
