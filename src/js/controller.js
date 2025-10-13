@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevel = 20;
+  #zoomLevelSelected = 20;
   #form;
   #workoutCl;
   #workouts;
@@ -154,7 +154,7 @@ class App {
       work => work.id === workoutEl.dataset.id
     );
 
-    this.#map.setView(workout.coords, this.#zoomLevel, {
+    this.#map.setView(workout.coords, this.#zoomLevelSelected, {
       animate: true,
       pan: {
         duration: 1,
