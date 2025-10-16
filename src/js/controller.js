@@ -61,6 +61,8 @@ class App {
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
+
+    console.log(this.#mapEvent);
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
 
@@ -105,6 +107,8 @@ class App {
     const duration = +this.#form.inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
+
+    console.log(type, distance, duration);
 
     // If activity running, create running Object
     if (type === 'running') {
@@ -197,12 +201,23 @@ class App {
 
     if (!editBtn) return;
 
-    console.log(this.#workout);
+    // rebuild workout from local storage
     const workout = this._rebuildWorkoutObj(this.#workout);
 
-    console.log(this.#workoutEl);
+    const [lat, lng] = workout.coords;
+    const latlng = { lat, lng };
+    this.#mapEvent = { latlng };
 
+    // show form
     this.#form.showForm(workout);
+
+    // find workout index and remove old workout object
+    const workoutsArr = this.#workoutCl.workouts;
+    const index = workoutsArr.findIndex(i => i);
+    workoutsArr.splice(index, 1);
+
+    // remove old workout
+    this.#workoutEl.remove();
   }
 
   reset() {
