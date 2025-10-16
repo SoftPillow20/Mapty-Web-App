@@ -20,7 +20,6 @@ export class Workout {
   }
 
   setLocalStorage() {
-    console.log(this.workouts);
     localStorage.setItem('workouts', JSON.stringify(this.workouts));
   }
 

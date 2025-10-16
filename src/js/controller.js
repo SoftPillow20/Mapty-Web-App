@@ -17,6 +17,8 @@ class App {
   #form;
   #workoutCl;
   #workouts;
+  #workout;
+  #workoutEl;
 
   constructor() {
     // Initializes classes
@@ -36,6 +38,7 @@ class App {
       this.#form.submitRenderHandler(this._newWorkout.bind(this));
       this.#form.inputTypeEventHandler();
       this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
+      this.#form.editRenderHandler(this._editForm.bind(this));
     });
   }
 
@@ -77,6 +80,7 @@ class App {
 
     if (!this.#workouts) return;
 
+    // Persist old workouts
     this.#workoutCl.workouts.push(...this.#workouts);
 
     this.#workouts.forEach(work => {
@@ -150,11 +154,12 @@ class App {
 
     if (!workoutEl) return;
 
-    const workout = this.#workouts.find(
+    this.#workoutEl = workoutEl;
+    this.#workout = this.#workoutCl.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
 
-    this.#map.setView(workout.coords, this.#zoomLevelSelected, {
+    this.#map.setView(this.#workout.coords, this.#zoomLevelSelected, {
       animate: true,
       pan: {
         duration: 1,
@@ -163,6 +168,41 @@ class App {
 
     // using the public interface
     // workout.click();
+  }
+
+  _rebuildWorkoutObj(workout) {
+    if (workout.type === 'running') {
+      workout = new Running(
+        workout.coords,
+        workout.distance,
+        workout.duration,
+        workout.cadence
+      );
+    }
+
+    if (workout.type === 'cycling') {
+      workout = new Cycling(
+        workout.coords,
+        workout.distance,
+        workout.duration,
+        workout.elevationGain
+      );
+    }
+
+    return workout;
+  }
+
+  _editForm(e) {
+    const editBtn = e.target.closest('.options__edit');
+
+    if (!editBtn) return;
+
+    console.log(this.#workout);
+    const workout = this._rebuildWorkoutObj(this.#workout);
+
+    console.log(this.#workoutEl);
+
+    this.#form.showForm(workout);
   }
 
   reset() {

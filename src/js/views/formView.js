@@ -7,6 +7,7 @@ export class Form {
     this.inputDuration = document.querySelector('.form__input--duration');
     this.inputCadence = document.querySelector('.form__input--cadence');
     this.inputElevation = document.querySelector('.form__input--elevation');
+    this.containerOptions = document.querySelector('.options');
   }
 
   viewRenderHandler(handler, mapObj) {
@@ -21,6 +22,10 @@ export class Form {
     this.containerWorkouts.addEventListener('click', handler);
   }
 
+  editRenderHandler(handler) {
+    this.containerOptions.addEventListener('click', handler);
+  }
+
   inputTypeEventHandler() {
     this.inputType.addEventListener(
       'change',
@@ -30,6 +35,24 @@ export class Form {
 
   formRemoveHiddenCl() {
     this.form.classList.remove('hidden');
+  }
+
+  showForm(workout) {
+    if (workout.type === 'running') {
+      this.inputType.value = workout.type;
+    }
+
+    if (workout.type === 'cycling') {
+      this.inputType.value = workout.type;
+      this.toggleElevationField();
+    }
+
+    this.inputDistance.placeholder = `${workout.distance}`;
+    this.inputDuration.placeholder = `${workout.duration}`;
+    this.inputCadence.placeholder = `${workout.cadence}`;
+    this.inputElevation.placeholder = `${workout.elevationGain}`;
+
+    this.formRemoveHiddenCl();
   }
 
   HideForm() {
@@ -46,7 +69,6 @@ export class Form {
   }
 
   toggleElevationField() {
-    console.log(this.inputElevation);
     this.inputElevation
       .closest('.form__row')
       .classList.toggle('form__row--hidden');
@@ -76,7 +98,9 @@ export class Form {
 
   renderWorkout(workout) {
     let html = `
-      <li class="workout workout--${workout.type}" data-id="${workout.id}">
+      <li class="workout workout--${workout.type}" data-id="${
+      workout.id
+    }" aria-selected="false">
         <h2 class="workout__title">${workout.description}</h2>
         <div class="workout__details">
           <span class="workout__icon">${
