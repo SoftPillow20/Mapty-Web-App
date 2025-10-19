@@ -215,6 +215,8 @@ class App {
 
     // remove old workout
     this.#workoutEl.remove();
+
+    this.#marker.unbindPopup();
   }
 
   reset() {
