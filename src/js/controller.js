@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 20;
+  #zoomLevelSelected = 13;
   #form;
   #workoutCl;
   #workouts;
@@ -201,19 +201,16 @@ class App {
 
     if (!editBtn) return;
 
-    // rebuild workout from local storage
-    const workout = this._rebuildWorkoutObj(this.#workout);
-
-    const [lat, lng] = workout.coords;
+    const [lat, lng] = this.#workout.coords;
     const latlng = { lat, lng };
     this.#mapEvent = { latlng };
 
     // show form
-    this.#form.showForm(workout);
+    this.#form.showForm(this.#workout);
 
     // find workout index and remove old workout object
     const workoutsArr = this.#workoutCl.workouts;
-    const index = workoutsArr.findIndex(i => i);
+    const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
     workoutsArr.splice(index, 1);
 
     // remove old workout
