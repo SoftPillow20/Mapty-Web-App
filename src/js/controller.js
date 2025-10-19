@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 13;
+  #zoomLevelSelected = 20;
   #form;
   #workoutCl;
   #workouts;
@@ -62,7 +62,6 @@ class App {
   _showForm(mapE) {
     this.#mapEvent = mapE;
 
-    console.log(this.#mapEvent);
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
 
@@ -108,8 +107,6 @@ class App {
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
-    console.log(type, distance, duration);
-
     // If activity running, create running Object
     if (type === 'running') {
       const cadence = +this.#form.inputCadence.value;
@@ -139,6 +136,8 @@ class App {
 
     // Add new object to workout array
     this.#workoutCl.workouts.push(workout);
+
+    this.#marker.closePopup();
 
     // Render popup on map as marker
     this.#form.renderPopup(workout, this.#marker);
@@ -208,6 +207,9 @@ class App {
     // show form
     this.#form.showForm(this.#workout);
 
+    // render correct input field
+    this.#form.renderInputField(this.#workout);
+
     // find workout index and remove old workout object
     const workoutsArr = this.#workoutCl.workouts;
     const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
@@ -215,8 +217,6 @@ class App {
 
     // remove old workout
     this.#workoutEl.remove();
-
-    this.#marker.unbindPopup();
   }
 
   reset() {

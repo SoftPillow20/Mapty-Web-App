@@ -44,7 +44,6 @@ export class Form {
 
     if (workout.type === 'cycling') {
       this.inputType.value = workout.type;
-      this.toggleElevationField();
     }
 
     this.inputDistance.placeholder = `${workout.distance}`;
@@ -76,6 +75,29 @@ export class Form {
     this.inputCadence
       .closest('.form__row')
       .classList.toggle('form__row--hidden');
+  }
+
+  renderInputField(workout) {
+    this.inputType.value = workout.type;
+    const inputType = this.inputType.value;
+
+    if (inputType === 'running') {
+      this.inputCadence
+        .closest('.form__row')
+        .classList.remove('form__row--hidden');
+      this.inputElevation
+        .closest('.form__row')
+        .classList.add('form__row--hidden');
+    }
+
+    if (inputType === 'cycling') {
+      this.inputCadence
+        .closest('.form__row')
+        .classList.add('form__row--hidden');
+      this.inputElevation
+        .closest('.form__row')
+        .classList.remove('form__row--hidden');
+    }
   }
 
   renderPopup(workout, marker) {
