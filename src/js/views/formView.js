@@ -170,4 +170,14 @@ export class Form {
 
     this.form.insertAdjacentHTML('afterend', html);
   }
+
+  workoutSelected(workout) {
+    this.containerWorkouts.querySelectorAll('.workout').forEach(work => {
+      work.setAttribute('aria-selected', false);
+
+      if (workout.getAttribute('aria-selected') !== 'true') {
+        workout.setAttribute('aria-selected', true);
+      }
+    });
+  }
 }

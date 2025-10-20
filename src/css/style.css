@@ -84,6 +84,10 @@ a:visited {
   border-left: 5px solid var(--color-brand--1);
 }
 
+.workout[aria-selected='true'] {
+  box-shadow: inset -0.5px 0px 0px 1px #fff;
+}
+
 .workout__title {
   font-size: 1.7rem;
   font-weight: 600;
@@ -196,6 +200,20 @@ a:visited {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #2d3439;
+  box-shadow: inset 0px 0px 0px 1px #fff;
+}
+
+.btn.options__cancel {
+  color: #2d3439;
+  background-color: #fff;
+}
+
+.btn.options__cancel:hover {
+  background-color: #aaa;
 }
 
 .copyright {

@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 20;
+  #zoomLevelSelected = 13;
   #form;
   #workoutCl;
   #workouts;
@@ -169,6 +169,8 @@ class App {
       },
     });
 
+    this.#form.workoutSelected(this.#workoutEl);
+
     // using the public interface
     // workout.click();
   }
@@ -198,26 +200,34 @@ class App {
   _editForm(e) {
     const editBtn = e.target.closest('.options__edit');
 
-    if (!editBtn) return;
+    // if edit button was not clicked
+    // or if there's a form already existed
+    // return early
+    if (!editBtn || !this.#form.form.classList.contains('hidden')) return;
 
     const [lat, lng] = this.#workout.coords;
     const latlng = { lat, lng };
     this.#mapEvent = { latlng };
+
+    // find workout index and remove old workout object
+    const workoutsArr = this.#workoutCl.workouts;
+    const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
+
+    if (this.#workoutEl.getAttribute('aria-selected') !== 'true') return;
+
+    workoutsArr.splice(index, 1);
+
+    // remove old workout
+    this.#workoutEl.remove();
 
     // show form
     this.#form.showForm(this.#workout);
 
     // render correct input field
     this.#form.renderInputField(this.#workout);
-
-    // find workout index and remove old workout object
-    const workoutsArr = this.#workoutCl.workouts;
-    const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
-    workoutsArr.splice(index, 1);
-
-    // remove old workout
-    this.#workoutEl.remove();
   }
+
+  _cancelEdit() {}
 
   reset() {
     localStorage.removeItem('workouts');
