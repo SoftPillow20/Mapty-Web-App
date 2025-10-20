@@ -2,12 +2,12 @@ export class Form {
   constructor() {
     this.form = document.querySelector('.form');
     this.containerWorkouts = document.querySelector('.workouts');
+    this.containerOptions = document.querySelector('.options');
     this.inputType = document.querySelector('.form__input--type');
     this.inputDistance = document.querySelector('.form__input--distance');
     this.inputDuration = document.querySelector('.form__input--duration');
     this.inputCadence = document.querySelector('.form__input--cadence');
     this.inputElevation = document.querySelector('.form__input--elevation');
-    this.containerOptions = document.querySelector('.options');
   }
 
   viewRenderHandler(handler, mapObj) {
@@ -22,7 +22,7 @@ export class Form {
     this.containerWorkouts.addEventListener('click', handler);
   }
 
-  editRenderHandler(handler) {
+  optionsRenderHandler(handler) {
     this.containerOptions.addEventListener('click', handler);
   }
 
@@ -171,6 +171,14 @@ export class Form {
     this.form.insertAdjacentHTML('afterend', html);
   }
 
+  renderOptions() {
+    this.containerOptions.classList.remove('hidden');
+  }
+
+  renderCancelOption() {
+    this.containerOptions.querySelector('options__cancel').style.opacity = 1;
+  }
+
   workoutSelected(workout) {
     this.containerWorkouts.querySelectorAll('.workout').forEach(work => {
       work.setAttribute('aria-selected', false);
@@ -179,5 +187,23 @@ export class Form {
         workout.setAttribute('aria-selected', true);
       }
     });
+  }
+
+  hideCurrentWorkout(workoutEl) {
+    workoutEl.classList.add('hidden');
+  }
+
+  optionsDefault(workoutEl) {
+    this.containerOptions.classList.add('hidden');
+
+    this.containerWorkouts.querySelectorAll('.workout').forEach(work => {
+      work.setAttribute('aria-selected', false);
+    });
+
+    if (!this.form.classList.contains('hidden')) {
+      this.form.classList.add('hidden');
+    }
+
+    workoutEl.classList.remove('hidden');
   }
 }

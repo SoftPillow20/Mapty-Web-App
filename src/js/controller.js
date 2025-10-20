@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 13;
+  #zoomLevelSelected = 20;
   #form;
   #workoutCl;
   #workouts;
@@ -38,7 +38,8 @@ class App {
       this.#form.submitRenderHandler(this._newWorkout.bind(this));
       this.#form.inputTypeEventHandler();
       this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
-      this.#form.editRenderHandler(this._editForm.bind(this));
+      this.#form.optionsRenderHandler(this._editForm.bind(this));
+      this.#form.optionsRenderHandler(this._cancelEdit.bind(this));
     });
   }
 
@@ -148,6 +149,9 @@ class App {
     // Hide form + clear input fields
     this.#form.HideForm();
 
+    if (this.#workout && this.#workoutEl) {
+      this._removeOldWorkout();
+    }
     // Set local storage to all workouts
     this.#workoutCl.setLocalStorage();
   }
@@ -170,6 +174,8 @@ class App {
     });
 
     this.#form.workoutSelected(this.#workoutEl);
+
+    this.#form.renderOptions();
 
     // using the public interface
     // workout.click();
@@ -209,6 +215,35 @@ class App {
     const latlng = { lat, lng };
     this.#mapEvent = { latlng };
 
+    // show form
+    this.#form.showForm(this.#workout);
+
+    // render correct input field
+    this.#form.renderInputField(this.#workout);
+
+    // hide old workout
+    this.#form.hideCurrentWorkout(this.#workoutEl);
+  }
+
+  _cancelEdit(e) {
+    const cancelBtn = e.target.closest('.options__cancel');
+
+    if (!cancelBtn) return;
+
+    this.#map.setView(this.#workout.coords, 13);
+
+    this.#form.optionsDefault(this.#workoutEl);
+
+    this.#workout = null;
+    this.#workoutEl = null;
+  }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
+  }
+
+  _removeOldWorkout() {
     // find workout index and remove old workout object
     const workoutsArr = this.#workoutCl.workouts;
     const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
@@ -219,20 +254,18 @@ class App {
 
     // remove old workout
     this.#workoutEl.remove();
-
-    // show form
-    this.#form.showForm(this.#workout);
-
-    // render correct input field
-    this.#form.renderInputField(this.#workout);
-  }
-
-  _cancelEdit() {}
-
-  reset() {
-    localStorage.removeItem('workouts');
-    location.reload();
   }
 }
 
 const app = new App();
+
+// next: Add a separator (create mode/edit mode)
+// create mode:
+// user should be able to create workouts
+// but they should not be able to use edit mode
+// until they cancel create mode
+
+// edit mode:
+// user should be able to click on workouts to edit them
+// but they should not be able to click on the map while in edit mode
+// until they cancel edit mode
