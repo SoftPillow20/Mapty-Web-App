@@ -211,17 +211,19 @@ export class Form {
     workoutEl.classList.add('hidden');
   }
 
-  optionsDefault(workoutEl) {
+  optionsDefault(workoutEl, forCreateMode) {
     this.containerOptions.classList.add('hidden');
 
     this.containerWorkouts.querySelectorAll('.workout').forEach(work => {
       work.setAttribute('aria-selected', false);
     });
 
-    if (!this.form.classList.contains('hidden')) {
-      this.form.classList.add('hidden');
-    }
+    if (!forCreateMode) {
+      if (!this.form.classList.contains('hidden')) {
+        this.form.classList.add('hidden');
+      }
 
-    workoutEl.classList.remove('hidden');
+      workoutEl.classList.remove('hidden');
+    }
   }
 }

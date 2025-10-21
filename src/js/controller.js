@@ -13,7 +13,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 20;
+  #zoomLevelSelected = 13;
   #form;
   #workoutCl;
   #workouts;
@@ -31,6 +31,8 @@ class App {
       // handle click event
       this.#form.viewRenderHandler(this._showForm.bind(this), res);
 
+      this.#form.viewRenderHandler(this._cancelEdit.bind(this), res);
+
       // Get data from local storage and load workouts
       this._loadWorkouts();
 
@@ -39,7 +41,7 @@ class App {
       this.#form.inputTypeEventHandler();
       this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
       this.#form.optionsRenderHandler(this._editForm.bind(this));
-      this.#form.optionsRenderHandler(this._cancelEdit.bind(this));
+      this.#form.optionsRenderHandler(this._cancelFunc.bind(this));
     });
   }
 
@@ -232,7 +234,7 @@ class App {
     this.#form.hideCurrentWorkout(this.#workoutEl);
   }
 
-  _cancelEdit(e) {
+  _cancelFunc(e) {
     const cancelBtn = e.target.closest('.options__cancel');
 
     if (!cancelBtn) return;
@@ -240,17 +242,22 @@ class App {
     if (!this.#workout && !this.#workoutEl) {
       this.#form.cancelCreateMode(this.#map, this.#marker);
     } else {
-      this.#map.setView(this.#workout.coords, 13);
-      this.#form.optionsDefault(this.#workoutEl);
+      this._cancelEdit(false);
     }
 
-    this.#workout = null;
-    this.#workoutEl = null;
+    this._deselectWorkout();
   }
 
-  reset() {
-    localStorage.removeItem('workouts');
-    location.reload();
+  _cancelEdit(forCreateMode = true) {
+    console.log(this.#workout, this.#workoutEl);
+    this.#form.optionsDefault(this.#workoutEl, forCreateMode);
+
+    this._deselectWorkout();
+  }
+
+  _deselectWorkout() {
+    this.#workout = null;
+    this.#workoutEl = null;
   }
 
   _removeOldWorkout() {
@@ -264,6 +271,11 @@ class App {
 
     // remove old workout
     this.#workoutEl.remove();
+  }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
