@@ -191,10 +191,17 @@ a:visited {
   transition: opacity 500ms;
 }
 
-.options.hidden {
+.options.hidden > *:not(.options__cancel),
+.options.hidden > .options__cancel {
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+}
+
+.options.hidden > .options__cancel.active {
+  opacity: 1;
+  pointer-events: all;
+  visibility: visible;
 }
 
 .options__sort {

@@ -69,6 +69,8 @@ class App {
     this.#marker = L.marker([lat, lng]).addTo(this.#map);
 
     this.#form.formRemoveHiddenCl();
+
+    this.#form.addCancelBtn();
   }
 
   _loadWorkoutMarker(work) {
@@ -149,9 +151,14 @@ class App {
     // Hide form + clear input fields
     this.#form.HideForm();
 
+    // if in edit mode
+    // remove old workout
     if (this.#workout && this.#workoutEl) {
       this._removeOldWorkout();
+    } else {
+      this.#form.removeCancelBtn();
     }
+
     // Set local storage to all workouts
     this.#workoutCl.setLocalStorage();
   }
@@ -230,9 +237,12 @@ class App {
 
     if (!cancelBtn) return;
 
-    this.#map.setView(this.#workout.coords, 13);
-
-    this.#form.optionsDefault(this.#workoutEl);
+    if (!this.#workout && !this.#workoutEl) {
+      this.#form.cancelCreateMode(this.#map, this.#marker);
+    } else {
+      this.#map.setView(this.#workout.coords, 13);
+      this.#form.optionsDefault(this.#workoutEl);
+    }
 
     this.#workout = null;
     this.#workoutEl = null;

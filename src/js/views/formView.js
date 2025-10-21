@@ -189,6 +189,24 @@ export class Form {
     });
   }
 
+  addCancelBtn() {
+    this.containerOptions
+      .querySelector('.options__cancel')
+      .classList.add('active');
+  }
+
+  removeCancelBtn() {
+    this.containerOptions
+      .querySelector('.options__cancel')
+      .classList.remove('active');
+  }
+
+  cancelCreateMode(map, marker) {
+    this.HideForm();
+    map.removeLayer(marker);
+    this.removeCancelBtn();
+  }
+
   hideCurrentWorkout(workoutEl) {
     workoutEl.classList.add('hidden');
   }
