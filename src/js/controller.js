@@ -72,7 +72,7 @@ class App {
 
     this.#form.formRemoveHiddenCl();
 
-    this.#form.addCancelBtn();
+    this.#form.renderCancelBtn();
   }
 
   _loadWorkoutMarker(work) {
@@ -244,15 +244,17 @@ class App {
     } else {
       this._cancelEdit(false);
     }
-
-    this._deselectWorkout();
   }
 
   _cancelEdit(forCreateMode = true) {
-    console.log(this.#workout, this.#workoutEl);
+    if (!this.#workout && !this.#workoutEl) return;
     this.#form.optionsDefault(this.#workoutEl, forCreateMode);
 
+    // resets workout selection
     this._deselectWorkout();
+
+    // resets the form
+    this.#form.resetForm();
   }
 
   _deselectWorkout() {

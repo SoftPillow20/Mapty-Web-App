@@ -54,6 +54,15 @@ export class Form {
     this.formRemoveHiddenCl();
   }
 
+  resetForm() {
+    setTimeout(() => {
+      this.inputDistance.placeholder = 'km';
+      this.inputDuration.placeholder = 'min';
+      this.inputCadence.placeholder = 'step/min';
+      this.inputElevation.placeholder = 'meters';
+    }, 500);
+  }
+
   HideForm() {
     // Empty inputs
     this.inputDistance.value =
@@ -189,7 +198,7 @@ export class Form {
     });
   }
 
-  addCancelBtn() {
+  renderCancelBtn() {
     this.containerOptions
       .querySelector('.options__cancel')
       .classList.add('active');
