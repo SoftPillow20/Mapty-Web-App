@@ -312,7 +312,7 @@ const app = new App();
 // but they should not be able to use edit mode
 // until they cancel create mode
 
-// edit mode:
+// edit mode: (done)
 // user should be able to click on workouts to edit them
 // but they should not be able to click on the map while in edit mode
 // until they cancel edit mode
