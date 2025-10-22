@@ -188,7 +188,7 @@ a:visited {
   pointer-events: all;
   visibility: visible;
 
-  transition: opacity 500ms;
+  transition: opacity 0.8s;
 }
 
 .options.hidden > *:not(.options__cancel),
@@ -263,9 +263,43 @@ a:visited {
 
 /* MAP */
 #map {
+  position: relative;
   flex: 1;
   height: 100%;
   background-color: var(--color-light--1);
+}
+
+#map > .modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(170, 170, 170, 0.8);
+  opacity: 0;
+  z-index: 9999;
+  transition: opacity 800ms;
+}
+
+#map > .modal.active {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+#map .modal__card {
+  color: #2d3439;
+  background-color: #ececec;
+  padding: 1.2rem;
+}
+
+.modal__card h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.modal__card p {
+  font-size: 1.4rem;
 }
 
 /* Popup width is defined in JS using options */

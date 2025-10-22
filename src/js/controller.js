@@ -19,6 +19,7 @@ class App {
   #workouts;
   #workout;
   #workoutEl;
+  #editMode = false;
 
   constructor() {
     // Initializes classes
