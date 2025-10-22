@@ -74,7 +74,7 @@ export class Form {
     // cancels out any transition no css
     this.form.style.display = 'none';
     this.form.classList.add('hidden');
-    setTimeout(() => (this.form.style.display = 'grid'), 1000);
+    setTimeout(() => (this.form.style.display = 'grid'), 250);
   }
 
   toggleElevationField() {
@@ -229,9 +229,7 @@ export class Form {
     });
 
     if (!editMode) {
-      if (!this.form.classList.contains('hidden')) {
-        this.form.classList.add('hidden');
-      }
+      this.HideForm();
 
       workoutEl.classList.remove('hidden');
     }
