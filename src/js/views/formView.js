@@ -1,6 +1,7 @@
 export class Form {
   constructor() {
     this.form = document.querySelector('.form');
+    this.modal = document.querySelector('.modal');
     this.containerWorkouts = document.querySelector('.workouts');
     this.containerOptions = document.querySelector('.options');
     this.inputType = document.querySelector('.form__input--type');
@@ -220,19 +221,41 @@ export class Form {
     workoutEl.classList.add('hidden');
   }
 
-  optionsDefault(workoutEl, forCreateMode) {
+  optionsDefault(workoutEl, editMode) {
     this.containerOptions.classList.add('hidden');
 
     this.containerWorkouts.querySelectorAll('.workout').forEach(work => {
       work.setAttribute('aria-selected', false);
     });
 
-    if (!forCreateMode) {
+    if (!editMode) {
       if (!this.form.classList.contains('hidden')) {
         this.form.classList.add('hidden');
       }
 
       workoutEl.classList.remove('hidden');
+    }
+  }
+
+  setModalActive(isActive, map, handler) {
+    if (isActive) {
+      this.modal.classList.add('active');
+      map.dragging.disable();
+      map.scrollWheelZoom.disable();
+      map.doubleClickZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+      map.touchZoom.disable();
+      map.off('click');
+    } else {
+      this.modal.classList.remove('active');
+      map.dragging.enable();
+      map.scrollWheelZoom.enable();
+      map.doubleClickZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+      map.touchZoom.enable();
+      this.viewRenderHandler(handler, map);
     }
   }
 }

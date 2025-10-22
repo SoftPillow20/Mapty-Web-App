@@ -10,6 +10,7 @@ import { Form } from './views/formView.js';
 
 class App {
   #map;
+  #mapObj;
   #mapPromise;
   #mapEvent;
   #marker;
@@ -28,11 +29,11 @@ class App {
     this.#workoutCl = new Workout();
 
     // When map loads,
-    this._loadMap().then(res => {
+    this._loadMap().then(mapObj => {
       // handle click event
-      this.#form.viewRenderHandler(this._showForm.bind(this), res);
+      this.#form.viewRenderHandler(this._showForm.bind(this), mapObj);
 
-      this.#form.viewRenderHandler(this._cancelEdit.bind(this), res);
+      this.#form.viewRenderHandler(this._cancelEdit.bind(this), mapObj);
 
       // Get data from local storage and load workouts
       this._loadWorkouts();
@@ -233,6 +234,14 @@ class App {
 
     // hide old workout
     this.#form.hideCurrentWorkout(this.#workoutEl);
+
+    // set modal to active
+    this.#editMode = true;
+    this.#form.setModalActive(
+      this.#editMode,
+      this.#map,
+      this._showForm.bind(this)
+    );
   }
 
   _cancelFunc(e) {
@@ -244,12 +253,25 @@ class App {
       this.#form.cancelCreateMode(this.#map, this.#marker);
     } else {
       this._cancelEdit(false);
+
+      if (this.#editMode === true) {
+        // set edit mode to false
+        this.#editMode = false;
+        this.#form.setModalActive(
+          this.#editMode,
+          this.#map,
+          this._showForm.bind(this)
+        );
+      }
     }
   }
 
-  _cancelEdit(forCreateMode = true) {
+  _cancelEdit(editMode = true) {
+    // console.log(this.#workout, this.#workoutEl);
+
     if (!this.#workout && !this.#workoutEl) return;
-    this.#form.optionsDefault(this.#workoutEl, forCreateMode);
+
+    this.#form.optionsDefault(this.#workoutEl, editMode);
 
     // resets workout selection
     this._deselectWorkout();

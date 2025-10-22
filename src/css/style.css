@@ -278,6 +278,8 @@ a:visited {
   width: 100%;
   background-color: rgba(170, 170, 170, 0.8);
   opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
   z-index: 9999;
   transition: opacity 800ms;
 }
@@ -285,6 +287,8 @@ a:visited {
 #map > .modal.active {
   opacity: 1;
   cursor: not-allowed;
+  pointer-events: all;
+  visibility: visible;
 }
 
 #map .modal__card {
