@@ -272,7 +272,7 @@ a:visited {
 #map > .modal {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   position: absolute;
   height: 100%;
   width: 100%;
@@ -290,16 +290,17 @@ a:visited {
 #map .modal__card {
   color: #2d3439;
   background-color: #ececec;
-  padding: 1.2rem;
+  padding: 2rem;
+  margin-top: 1.2rem;
 }
 
 .modal__card h2 {
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
 }
 
 .modal__card p {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 
 /* Popup width is defined in JS using options */
