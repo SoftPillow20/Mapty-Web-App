@@ -221,6 +221,10 @@ export class Form {
     workoutEl.classList.add('hidden');
   }
 
+  showCurrentWorkout(workoutEl) {
+    workoutEl.classList.remove('hidden');
+  }
+
   optionsDefault(workoutEl, editMode) {
     this.containerOptions.classList.add('hidden');
 

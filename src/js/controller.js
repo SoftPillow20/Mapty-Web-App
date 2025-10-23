@@ -14,7 +14,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 13;
+  #zoomLevelSelected = 17;
   #form;
   #workoutCl;
   #workouts;
@@ -172,11 +172,29 @@ class App {
 
     if (!workoutEl) return;
 
+    // if user is on edit mode
+    // and clicks on another workout
+    // auto hide form and show hidden workout element
+    if (this.#editMode) {
+      this.#form.showCurrentWorkout(this.#workoutEl);
+      this.#form.HideForm();
+    }
+
+    // if user is on create mode but clicks on workout
+    // auto cancel create mode
+    if (!this.#editMode && !this.#form.form.classList.contains('hidden')) {
+      this.#form.cancelCreateMode(this.#map, this.#marker);
+    }
+
+    // save selected workout element
     this.#workoutEl = workoutEl;
+
+    // save selected workout object
     this.#workout = this.#workoutCl.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
 
+    // set the map according to the selected workout object
     this.#map.setView(this.#workout.coords, this.#zoomLevelSelected, {
       animate: true,
       pan: {
@@ -305,14 +323,3 @@ class App {
 }
 
 const app = new App();
-
-// next: Add a separator (create mode/edit mode)
-// create mode:
-// user should be able to create workouts
-// but they should not be able to use edit mode
-// until they cancel create mode
-
-// edit mode: (done)
-// user should be able to click on workouts to edit them
-// but they should not be able to click on the map while in edit mode
-// until they cancel edit mode
