@@ -14,7 +14,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 17;
+  #zoomLevelSelected = 13;
   #form;
   #workoutCl;
   #workouts;
@@ -43,6 +43,7 @@ class App {
       this.#form.inputTypeEventHandler();
       this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
       this.#form.optionsRenderHandler(this._editForm.bind(this));
+      this.#form.optionsRenderHandler(this._deleteWorkout.bind(this));
       this.#form.optionsRenderHandler(this._cancelFunc.bind(this));
     });
   }
@@ -66,6 +67,8 @@ class App {
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
+
+    console.log(this.#mapEvent.latlng);
 
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
@@ -142,12 +145,15 @@ class App {
     }
 
     // Add new object to workout array
-    this.#workoutCl.workouts.push(workout);
-
-    this.#marker.closePopup();
+    console.log(this.#workout, this.#workoutEl);
 
     // Render popup on map as marker
-    this.#form.renderPopup(workout, this.#marker);
+    if (!this.#workout && !this.#workoutEl) {
+      this.#workoutCl.workouts.push(workout);
+      this.#form.renderPopup(workout, this.#marker);
+    }
+
+    console.log(this.#marker.getPopup());
 
     // Render workout on list
     this.#form.renderWorkout(workout);
@@ -158,13 +164,29 @@ class App {
     // if in edit mode
     // remove old workout
     if (this.#workout && this.#workoutEl) {
-      this._removeOldWorkout();
+      // close previous popup
+
+      this._replaceOldWorkout(workout);
+
+      window.location.reload();
     } else {
       this.#form.removeCancelBtn();
     }
 
+    console.log(this.#workoutCl.workouts);
+
     // Set local storage to all workouts
     this.#workoutCl.setLocalStorage();
+  }
+
+  _replaceOldWorkout(workout) {
+    console.log(this.#workout, workout);
+
+    // remove previous workout
+    this._removeOldWorkout();
+
+    // add new workout
+    this.#workoutCl.workouts.push(workout);
   }
 
   _moveToPopup(e) {
@@ -193,6 +215,10 @@ class App {
     this.#workout = this.#workoutCl.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
+
+    console.log(this.#workout);
+    console.log(this.#marker.getPopup());
+    console.log(this.#workoutCl.workouts);
 
     // set the map according to the selected workout object
     this.#map.setView(this.#workout.coords, this.#zoomLevelSelected, {
@@ -244,8 +270,14 @@ class App {
     const latlng = { lat, lng };
     this.#mapEvent = { latlng };
 
+    console.log(this.#workout.type);
+
     // show form
     this.#form.showForm(this.#workout);
+
+    // console.log(this.#marker.getPopup());
+
+    // console.log(this.#marker.getLatLng());
 
     // render correct input field
     this.#form.renderInputField(this.#workout);
@@ -260,6 +292,15 @@ class App {
       this.#map,
       this._showForm.bind(this)
     );
+  }
+
+  _deleteWorkout(e) {
+    const deleteBtn = e.target.closest('.options__delete');
+
+    if (!deleteBtn) return;
+    console.log(true);
+
+    this.#form.activeSidebarModal();
   }
 
   _cancelFunc(e) {

@@ -1,7 +1,9 @@
 export class Form {
   constructor() {
     this.form = document.querySelector('.form');
-    this.modal = document.querySelector('.modal');
+    this.mapModal = document.querySelector('.map__modal');
+    this.sidebarModal = document.querySelector('.sidebar__modal');
+    this.modalBtns = document.querySelector('.modal__btns');
     this.containerWorkouts = document.querySelector('.workouts');
     this.containerOptions = document.querySelector('.options');
     this.inputType = document.querySelector('.form__input--type');
@@ -241,7 +243,7 @@ export class Form {
 
   setModalActive(isActive, map, handler) {
     if (isActive) {
-      this.modal.classList.add('active');
+      this.mapModal.classList.add('active');
       map.dragging.disable();
       map.scrollWheelZoom.disable();
       map.doubleClickZoom.disable();
@@ -250,7 +252,7 @@ export class Form {
       map.touchZoom.disable();
       map.off('click');
     } else {
-      this.modal.classList.remove('active');
+      this.mapModal.classList.remove('active');
       map.dragging.enable();
       map.scrollWheelZoom.enable();
       map.doubleClickZoom.enable();
@@ -259,5 +261,9 @@ export class Form {
       map.touchZoom.enable();
       this.viewRenderHandler(handler, map);
     }
+  }
+
+  activeSidebarModal() {
+    this.sidebarModal.classList.add('active');
   }
 }

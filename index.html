@@ -31,6 +31,38 @@
   </head>
   <body>
     <div class="sidebar">
+      <div class="sidebar__modal">
+        <h2>Permanently delete this workout?</h2>
+        <ul class="workouts__preview">
+          <li class="workout workout--running" data-id="1234567890">
+            <h2 class="workout__title">Running on April 14</h2>
+            <div class="workout__details">
+              <span class="workout__icon">🏃‍♂️</span>
+              <span class="workout__value">5.2</span>
+              <span class="workout__unit">km</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">⏱</span>
+              <span class="workout__value">24</span>
+              <span class="workout__unit">min</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">⚡️</span>
+              <span class="workout__value">4.6</span>
+              <span class="workout__unit">min/km</span>
+            </div>
+            <div class="workout__details">
+              <span class="workout__icon">🦶🏼</span>
+              <span class="workout__value">178</span>
+              <span class="workout__unit">spm</span>
+            </div>
+          </li>
+        </ul>
+        <div class="modal__btns">
+          <button class="modal__btn--yes margin-right--sm btn">✅ Yes</button>
+          <button class="modal__btn--no btn">❌ no</button>
+        </div>
+      </div>
       <img src="src/img/logo.png" alt="Logo" class="logo" />
 
       <ul class="workouts">
@@ -99,7 +131,7 @@
     </div>
 
     <div id="map">
-      <div class="modal">
+      <div class="map__modal">
         <div class="modal__card">
           <h2>You are in edit mode!</h2>
           <p>
