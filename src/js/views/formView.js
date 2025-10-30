@@ -5,6 +5,8 @@ export class Form {
     this.sidebarModal = document.querySelector('.sidebar__modal');
     this.modalBtns = document.querySelector('.modal__btns');
     this.containerWorkouts = document.querySelector('.workouts');
+    this.containerWorkoutsPreview =
+      document.querySelector('.workouts__preview');
     this.containerOptions = document.querySelector('.options');
     this.inputType = document.querySelector('.form__input--type');
     this.inputDistance = document.querySelector('.form__input--distance');
@@ -130,7 +132,15 @@ export class Form {
       .openPopup();
   }
 
-  renderWorkout(workout) {
+  renderWorkoutOnForm(html) {
+    this.form.insertAdjacentHTML('afterend', html);
+  }
+
+  renderWorkoutOnPreview(html) {
+    this.containerWorkoutsPreview.insertAdjacentHTML('afterend', html);
+  }
+
+  setRenderWorkout(workout) {
     let html = `
       <li class="workout workout--${workout.type}" data-id="${
       workout.id
@@ -180,7 +190,7 @@ export class Form {
       </li>
     `;
 
-    this.form.insertAdjacentHTML('afterend', html);
+    return html;
   }
 
   renderOptions() {
@@ -263,7 +273,10 @@ export class Form {
     }
   }
 
-  activeSidebarModal() {
+  activeSidebarModal(workout) {
     this.sidebarModal.classList.add('active');
+    const workoutHtml = this.setRenderWorkout(workout);
+
+    this.renderWorkoutOnPreview(workoutHtml);
   }
 }

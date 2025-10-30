@@ -15,7 +15,7 @@ class App {
   #mapEvent;
   #marker;
   #zoomLevelSelected = 13;
-  #form;
+  #formCl;
   #workoutCl;
   #workouts;
   #workout;
@@ -25,26 +25,26 @@ class App {
   constructor() {
     // Initializes classes
     this.#mapPromise = new Map().mapPromise;
-    this.#form = new Form();
+    this.#formCl = new Form();
     this.#workoutCl = new Workout();
 
     // When map loads,
     this._loadMap().then(mapObj => {
       // handle click event
-      this.#form.viewRenderHandler(this._showForm.bind(this), mapObj);
+      this.#formCl.viewRenderHandler(this._showForm.bind(this), mapObj);
 
-      this.#form.viewRenderHandler(this._cancelEdit.bind(this), mapObj);
+      this.#formCl.viewRenderHandler(this._cancelEdit.bind(this), mapObj);
 
       // Get data from local storage and load workouts
       this._loadWorkouts();
 
       // Attach event handlers
-      this.#form.submitRenderHandler(this._newWorkout.bind(this));
-      this.#form.inputTypeEventHandler();
-      this.#form.moveViewEventHandler(this._moveToPopup.bind(this));
-      this.#form.optionsRenderHandler(this._editForm.bind(this));
-      this.#form.optionsRenderHandler(this._deleteWorkout.bind(this));
-      this.#form.optionsRenderHandler(this._cancelFunc.bind(this));
+      this.#formCl.submitRenderHandler(this._newWorkout.bind(this));
+      this.#formCl.inputTypeEventHandler();
+      this.#formCl.moveViewEventHandler(this._moveToPopup.bind(this));
+      this.#formCl.optionsRenderHandler(this._editForm.bind(this));
+      this.#formCl.optionsRenderHandler(this._deleteWorkout.bind(this));
+      this.#formCl.optionsRenderHandler(this._cancelFunc.bind(this));
     });
   }
 
@@ -75,9 +75,9 @@ class App {
 
     this.#marker = L.marker([lat, lng]).addTo(this.#map);
 
-    this.#form.formRemoveHiddenCl();
+    this.#formCl.formRemoveHiddenCl();
 
-    this.#form.renderCancelBtn();
+    this.#formCl.renderCancelBtn();
   }
 
   _loadWorkoutMarker(work) {
@@ -96,8 +96,10 @@ class App {
 
     this.#workouts.forEach(work => {
       this._loadWorkoutMarker(work);
-      this.#form.renderPopup(work, this.#marker);
-      this.#form.renderWorkout(work);
+      this.#formCl.renderPopup(work, this.#marker);
+      const workoutHtml = this.#formCl.setRenderWorkout(work);
+
+      this.#formCl.renderWorkoutOnForm(workoutHtml);
     });
   }
 
@@ -111,15 +113,15 @@ class App {
     e.preventDefault();
 
     // Get data from form
-    const type = this.#form.inputType.value;
-    const distance = +this.#form.inputDistance.value;
-    const duration = +this.#form.inputDuration.value;
+    const type = this.#formCl.inputType.value;
+    const distance = +this.#formCl.inputDistance.value;
+    const duration = +this.#formCl.inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
     // If activity running, create running Object
     if (type === 'running') {
-      const cadence = +this.#form.inputCadence.value;
+      const cadence = +this.#formCl.inputCadence.value;
 
       // Check if data is valid
       if (
@@ -132,7 +134,7 @@ class App {
     }
     // If workout cycling, create cycling object
     if (type === 'cycling') {
-      const elevation = +this.#form.inputElevation.value;
+      const elevation = +this.#formCl.inputElevation.value;
 
       // Check if data is valid
       if (
@@ -150,16 +152,18 @@ class App {
     // Render popup on map as marker
     if (!this.#workout && !this.#workoutEl) {
       this.#workoutCl.workouts.push(workout);
-      this.#form.renderPopup(workout, this.#marker);
+      this.#formCl.renderPopup(workout, this.#marker);
     }
 
     console.log(this.#marker.getPopup());
 
     // Render workout on list
-    this.#form.renderWorkout(workout);
+    const workoutHtml = this.#formCl.setRenderWorkout(workout);
+
+    this.#formCl.renderWorkoutOnForm(workoutHtml);
 
     // Hide form + clear input fields
-    this.#form.HideForm();
+    this.#formCl.HideForm();
 
     // if in edit mode
     // remove old workout
@@ -170,7 +174,7 @@ class App {
 
       window.location.reload();
     } else {
-      this.#form.removeCancelBtn();
+      this.#formCl.removeCancelBtn();
     }
 
     console.log(this.#workoutCl.workouts);
@@ -198,14 +202,14 @@ class App {
     // and clicks on another workout
     // auto hide form and show hidden workout element
     if (this.#editMode) {
-      this.#form.showCurrentWorkout(this.#workoutEl);
-      this.#form.HideForm();
+      this.#formCl.showCurrentWorkout(this.#workoutEl);
+      this.#formCl.HideForm();
     }
 
     // if user is on create mode but clicks on workout
     // auto cancel create mode
-    if (!this.#editMode && !this.#form.form.classList.contains('hidden')) {
-      this.#form.cancelCreateMode(this.#map, this.#marker);
+    if (!this.#editMode && !this.#formCl.form.classList.contains('hidden')) {
+      this.#formCl.cancelCreateMode(this.#map, this.#marker);
     }
 
     // save selected workout element
@@ -228,9 +232,9 @@ class App {
       },
     });
 
-    this.#form.workoutSelected(this.#workoutEl);
+    this.#formCl.workoutSelected(this.#workoutEl);
 
-    this.#form.renderOptions();
+    this.#formCl.renderOptions();
 
     // using the public interface
     // workout.click();
@@ -264,7 +268,7 @@ class App {
     // if edit button was not clicked
     // or if there's a form already existed
     // return early
-    if (!editBtn || !this.#form.form.classList.contains('hidden')) return;
+    if (!editBtn || !this.#formCl.form.classList.contains('hidden')) return;
 
     const [lat, lng] = this.#workout.coords;
     const latlng = { lat, lng };
@@ -273,21 +277,21 @@ class App {
     console.log(this.#workout.type);
 
     // show form
-    this.#form.showForm(this.#workout);
+    this.#formCl.showForm(this.#workout);
 
     // console.log(this.#marker.getPopup());
 
     // console.log(this.#marker.getLatLng());
 
     // render correct input field
-    this.#form.renderInputField(this.#workout);
+    this.#formCl.renderInputField(this.#workout);
 
     // hide old workout
-    this.#form.hideCurrentWorkout(this.#workoutEl);
+    this.#formCl.hideCurrentWorkout(this.#workoutEl);
 
     // set modal to active
     this.#editMode = true;
-    this.#form.setModalActive(
+    this.#formCl.setModalActive(
       this.#editMode,
       this.#map,
       this._showForm.bind(this)
@@ -297,10 +301,12 @@ class App {
   _deleteWorkout(e) {
     const deleteBtn = e.target.closest('.options__delete');
 
-    if (!deleteBtn) return;
-    console.log(true);
+    console.log(this.#workout);
 
-    this.#form.activeSidebarModal();
+    if (!deleteBtn && !this.#workout) return;
+    console.log(this.#workout);
+
+    this.#formCl.activeSidebarModal(this.#workout);
   }
 
   _cancelFunc(e) {
@@ -309,14 +315,14 @@ class App {
     if (!cancelBtn) return;
 
     if (!this.#workout && !this.#workoutEl) {
-      this.#form.cancelCreateMode(this.#map, this.#marker);
+      this.#formCl.cancelCreateMode(this.#map, this.#marker);
     } else {
       this._cancelEdit(false);
 
       if (this.#editMode === true) {
         // set edit mode to false
         this.#editMode = false;
-        this.#form.setModalActive(
+        this.#formCl.setModalActive(
           this.#editMode,
           this.#map,
           this._showForm.bind(this)
@@ -330,13 +336,13 @@ class App {
 
     if (!this.#workout && !this.#workoutEl) return;
 
-    this.#form.optionsDefault(this.#workoutEl, editMode);
+    this.#formCl.optionsDefault(this.#workoutEl, editMode);
 
     // resets workout selection
     this._deselectWorkout();
 
     // resets the form
-    this.#form.resetForm();
+    this.#formCl.resetForm();
   }
 
   _deselectWorkout() {
