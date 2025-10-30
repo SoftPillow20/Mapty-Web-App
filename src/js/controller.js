@@ -45,6 +45,7 @@ class App {
       this.#formCl.optionsRenderHandler(this._editForm.bind(this));
       this.#formCl.optionsRenderHandler(this._deleteWorkout.bind(this));
       this.#formCl.optionsRenderHandler(this._cancelFunc.bind(this));
+      this.#formCl.modalBtnsEventHandler(this._confirmDeleteWorkout.bind(this));
     });
   }
 
@@ -67,6 +68,8 @@ class App {
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
+
+    // console.log(this.#mapEvent.latlng);
 
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
@@ -286,9 +289,34 @@ class App {
   _deleteWorkout(e) {
     const deleteBtn = e.target.closest('.options__delete');
 
-    if (!deleteBtn) return;
+    if (!deleteBtn || !this.#workout) return;
+    this.#formCl.toggleSidebarModal();
+    this.#formCl.showWorkoutOnPreview(this.#workout);
+  }
 
-    if (this.#workout) this.#formCl.activeSidebarModal(this.#workout);
+  _confirmDeleteWorkout(e) {
+    const yesBtn = e.target.closest('.modal__btn--yes');
+    const noBtn = e.target.closest('.modal__btn--no');
+    let isWorkoutDeleted = false;
+
+    if (yesBtn || (noBtn && this.#workout)) {
+      this.#formCl.toggleSidebarModal();
+      this.#formCl.removeWorkoutOnPreview();
+    }
+
+    if (yesBtn && this.#workout) {
+      this._removeOldWorkout();
+      isWorkoutDeleted = true;
+
+      setTimeout(() => window.location.reload(), 250);
+    } else {
+      return;
+    }
+
+    // set the updated workouts array to local storage
+    if (isWorkoutDeleted) {
+      this.#workoutCl.setLocalStorage();
+    }
   }
 
   _cancelFunc(e) {

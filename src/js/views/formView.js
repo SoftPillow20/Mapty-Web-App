@@ -31,6 +31,12 @@ export class Form {
     this.containerOptions.addEventListener('click', handler);
   }
 
+  modalBtnsEventHandler(handler) {
+    this.modalBtns.addEventListener('click', handler);
+  }
+
+  // Wrong naming for a function
+  // handlers should have handler parameter
   inputTypeEventHandler() {
     this.inputType.addEventListener(
       'change',
@@ -137,7 +143,7 @@ export class Form {
   }
 
   renderWorkoutOnPreview(html) {
-    this.containerWorkoutsPreview.insertAdjacentHTML('afterend', html);
+    this.containerWorkoutsPreview.insertAdjacentHTML('afterbegin', html);
   }
 
   setRenderWorkout(workout) {
@@ -273,10 +279,18 @@ export class Form {
     }
   }
 
-  activeSidebarModal(workout) {
-    this.sidebarModal.classList.add('active');
-    const workoutHtml = this.setRenderWorkout(workout);
+  toggleSidebarModal() {
+    this.sidebarModal.classList.toggle('active');
+  }
 
+  showWorkoutOnPreview(workout) {
+    const workoutHtml = this.setRenderWorkout(workout);
     this.renderWorkoutOnPreview(workoutHtml);
+  }
+
+  removeWorkoutOnPreview() {
+    const previewWorkout =
+      this.containerWorkoutsPreview.querySelector('.workout');
+    previewWorkout.remove();
   }
 }
