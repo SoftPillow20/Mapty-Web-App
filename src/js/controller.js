@@ -68,8 +68,6 @@ class App {
   _showForm(mapE) {
     this.#mapEvent = mapE;
 
-    console.log(this.#mapEvent.latlng);
-
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
 
@@ -146,16 +144,13 @@ class App {
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
-    // Add new object to workout array
-    console.log(this.#workout, this.#workoutEl);
-
     // Render popup on map as marker
     if (!this.#workout && !this.#workoutEl) {
       this.#workoutCl.workouts.push(workout);
       this.#formCl.renderPopup(workout, this.#marker);
     }
 
-    console.log(this.#marker.getPopup());
+    // console.log(this.#marker.getPopup());
 
     // Render workout on list
     const workoutHtml = this.#formCl.setRenderWorkout(workout);
@@ -177,15 +172,11 @@ class App {
       this.#formCl.removeCancelBtn();
     }
 
-    console.log(this.#workoutCl.workouts);
-
     // Set local storage to all workouts
     this.#workoutCl.setLocalStorage();
   }
 
   _replaceOldWorkout(workout) {
-    console.log(this.#workout, workout);
-
     // remove previous workout
     this._removeOldWorkout();
 
@@ -219,10 +210,6 @@ class App {
     this.#workout = this.#workoutCl.workouts.find(
       work => work.id === workoutEl.dataset.id
     );
-
-    console.log(this.#workout);
-    console.log(this.#marker.getPopup());
-    console.log(this.#workoutCl.workouts);
 
     // set the map according to the selected workout object
     this.#map.setView(this.#workout.coords, this.#zoomLevelSelected, {
@@ -274,8 +261,6 @@ class App {
     const latlng = { lat, lng };
     this.#mapEvent = { latlng };
 
-    console.log(this.#workout.type);
-
     // show form
     this.#formCl.showForm(this.#workout);
 
@@ -301,12 +286,9 @@ class App {
   _deleteWorkout(e) {
     const deleteBtn = e.target.closest('.options__delete');
 
-    console.log(this.#workout);
+    if (!deleteBtn) return;
 
-    if (!deleteBtn && !this.#workout) return;
-    console.log(this.#workout);
-
-    this.#formCl.activeSidebarModal(this.#workout);
+    if (this.#workout) this.#formCl.activeSidebarModal(this.#workout);
   }
 
   _cancelFunc(e) {
