@@ -14,7 +14,7 @@ class App {
   #mapPromise;
   #mapEvent;
   #marker;
-  #zoomLevelSelected = 13;
+  #zoomLevelSelected = 16;
   #formCl;
   #workoutCl;
   #workouts;
@@ -170,7 +170,7 @@ class App {
 
       this._replaceOldWorkout(workout);
 
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 250);
     } else {
       this.#formCl.removeCancelBtn();
     }
