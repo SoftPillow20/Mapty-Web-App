@@ -10,7 +10,6 @@ import { Form } from './views/formView.js';
 
 class App {
   #map;
-  #mapObj;
   #mapPromise;
   #mapEvent;
   #marker;
@@ -19,6 +18,7 @@ class App {
   #workoutCl;
   #workouts;
   #workout;
+  #deleteAll = false;
   #workoutEl;
   #editMode = false;
 
@@ -45,6 +45,7 @@ class App {
       this.#formCl.optionsRenderHandler(this._editForm.bind(this));
       this.#formCl.optionsRenderHandler(this._deleteWorkout.bind(this));
       this.#formCl.optionsRenderHandler(this._cancelFunc.bind(this));
+      this.#formCl.optionsRenderHandler(this._deleteAllWorkout.bind(this));
       this.#formCl.modalBtnsEventHandler(this._confirmDeleteWorkout.bind(this));
     });
   }
@@ -225,9 +226,6 @@ class App {
     this.#formCl.workoutSelected(this.#workoutEl);
 
     this.#formCl.renderOptions();
-
-    // using the public interface
-    // workout.click();
   }
 
   _rebuildWorkoutObj(workout) {
@@ -304,19 +302,41 @@ class App {
       this.#formCl.removeWorkoutOnPreview();
     }
 
-    if (yesBtn && this.#workout) {
+    if (yesBtn && this.#deleteAll) {
+      this.#workoutCl.workouts.length = 0;
+      isWorkoutDeleted = true;
+
+      setTimeout(() => window.location.reload(), 250);
+    }
+
+    if (yesBtn && !this.#deleteAll) {
       this._removeOldWorkout();
       isWorkoutDeleted = true;
 
       setTimeout(() => window.location.reload(), 250);
     } else {
-      return;
+      this.#deleteAll = false;
     }
 
     // set the updated workouts array to local storage
     if (isWorkoutDeleted) {
       this.#workoutCl.setLocalStorage();
     }
+  }
+
+  _deleteAllWorkout(e) {
+    const deleteAllBtn = e.target.closest('.options__delete_all');
+
+    if (!deleteAllBtn) return;
+    this.#formCl.toggleSidebarModal();
+
+    this.#deleteAll = true;
+
+    const currentWorkouts = this.#workouts;
+
+    currentWorkouts.forEach(workout => {
+      this.#formCl.showWorkoutOnPreview(workout);
+    });
   }
 
   _cancelFunc(e) {
@@ -349,20 +369,20 @@ class App {
     this.#formCl.optionsDefault(this.#workoutEl, editMode);
 
     // resets workout selection
-    this._deselectWorkout();
+    this._unselectWorkout();
 
     // resets the form
     this.#formCl.resetForm();
   }
 
-  _deselectWorkout() {
+  _unselectWorkout() {
     this.#workout = null;
     this.#workoutEl = null;
   }
 
   _removeOldWorkout() {
     // find workout index and remove old workout object
-    const workoutsArr = this.#workoutCl.workouts;
+    const workoutsArr = this.#workouts;
     const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
 
     if (this.#workoutEl.getAttribute('aria-selected') !== 'true') return;

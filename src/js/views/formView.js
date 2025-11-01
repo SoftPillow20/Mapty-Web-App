@@ -290,7 +290,7 @@ export class Form {
 
   removeWorkoutOnPreview() {
     const previewWorkout =
-      this.containerWorkoutsPreview.querySelector('.workout');
-    previewWorkout.remove();
+      this.containerWorkoutsPreview.querySelectorAll('.workout');
+    previewWorkout.forEach(workoutHtml => workoutHtml.remove());
   }
 }
