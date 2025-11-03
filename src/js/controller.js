@@ -19,6 +19,8 @@ class Controller {
   #workoutEl;
   #editMode = false;
 
+  #workoutsType;
+
   constructor() {
     // Initializes classes
     this.#mapPromise = new Map().mapPromise;
@@ -45,6 +47,7 @@ class Controller {
       this.#formCl.optionsRenderHandler(this._deleteAllWorkout.bind(this));
       this.#formCl.modalBtnsEventHandler(this._confirmDeleteWorkout.bind(this));
       this.#formCl.sortTypeRenderHandler(this._sortWorkouts.bind(this));
+      this.#formCl.orderTypeRenderHandler(this._orderWorkouts.bind(this));
     });
   }
 
@@ -382,11 +385,45 @@ class Controller {
     const sortType = e.currentTarget.value;
     console.log(sortType);
 
-    const workoutsDistance = this.#workouts.map(work => work.distance);
+    this.#workoutsType = null;
+    this.#formCl.orderType.value = '';
+
+    if (sortType === 'date') {
+      this.#workoutsType = this.#workouts.map(work => work.date);
+    }
 
     if (sortType === 'distance') {
-      console.log(workoutsDistance);
+      this.#workoutsType = this.#workouts.map(work => work.distance);
     }
+
+    if (sortType === 'duration') {
+      this.#workoutsType = this.#workouts.map(work => work.duration);
+    }
+
+    console.log(this.#workoutsType);
+  }
+
+  _orderWorkouts(e) {
+    let orderType = e.currentTarget.value;
+    const workouts = this.#workoutsType;
+    let order = null;
+    console.log(orderType);
+
+    if (!this.#workoutsType) {
+      alert('Please select an option to sort.');
+      e.currentTarget.value = '';
+      return;
+    }
+
+    if (orderType === 'ascending') {
+      order = workouts.toSorted((a, b) => a - b);
+    }
+
+    if (orderType === 'descending') {
+      order = workouts.toSorted((a, b) => b - a);
+    }
+
+    console.log(order);
   }
 
   reset() {

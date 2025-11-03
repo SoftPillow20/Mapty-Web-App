@@ -9,6 +9,7 @@ export class Form {
       document.querySelector('.workouts__preview');
     this.containerOptions = document.querySelector('.options');
     this.sortType = document.querySelector('.sort__type');
+    this.orderType = document.querySelector('.order__type');
     this.inputType = document.querySelector('.form__input--type');
     this.inputDistance = document.querySelector('.form__input--distance');
     this.inputDuration = document.querySelector('.form__input--duration');
@@ -36,6 +37,14 @@ export class Form {
     this.modalBtns.addEventListener('click', handler);
   }
 
+  sortTypeRenderHandler(handler) {
+    this.sortType.addEventListener('change', handler);
+  }
+
+  orderTypeRenderHandler(handler) {
+    this.orderType.addEventListener('change', handler);
+  }
+
   // Wrong naming for a function
   // handlers should have handler parameter
   inputTypeEventHandler() {
@@ -43,10 +52,6 @@ export class Form {
       'change',
       this.toggleElevationField.bind(this)
     );
-  }
-
-  sortTypeRenderHandler(handler) {
-    this.sortType.addEventListener('change', handler);
   }
 
   formRemoveHiddenCl() {
