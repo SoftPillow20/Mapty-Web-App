@@ -32,7 +32,7 @@
   <body>
     <div class="sidebar">
       <div class="sidebar__modal">
-        <h2>Permanently delete this workout?</h2>
+        <h2>Permanently delete these workout?</h2>
         <ul class="workouts__preview"></ul>
         <div class="modal__btns">
           <button class="modal__btn--yes margin-right--sm btn">✅ Yes</button>
@@ -85,12 +85,19 @@
         <button class="options__delete_all btn">🗑️ delete all</button>
         <button class="options__cancel btn">⛔ cancel</button>
       </div>
-      <div class="margin-bottom--sm">
+      <div class="sort__container margin-bottom--sm">
         <label class="options__sort" for="sort">sort workouts</label>
-        <select name="sort" id="sort" class="form__input sort">
+        <select name="sort" id="sort" class="form__input sort__type sort">
+          <option value="">options</option>
           <option value="date">date</option>
           <option value="distance">distance</option>
           <option value="duration">duration</option>
+        </select>
+        <label class="options__sort" for="order">order</label>
+        <select name="order" id="order" class="form__input order__type sort">
+          <option value=""></option>
+          <option value="ascending">ascending</option>
+          <option value="descending">descending</option>
         </select>
       </div>
 

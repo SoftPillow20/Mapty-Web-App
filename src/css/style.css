@@ -250,12 +250,18 @@ a:visited {
 }
 
 .options__sort {
+  font-size: inherit;
+}
+
+.sort__container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   font-size: 1.6rem;
 }
 
 .sort {
   width: auto;
-  margin-left: 1.2rem;
 }
 
 .btn {

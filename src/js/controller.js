@@ -5,10 +5,7 @@ import { Map } from './models/mapModel.js';
 import { renderMap } from './views/mapView.js';
 import { Form } from './views/formView.js';
 
-////////////////////////////////
-// APPLICATION ARCHITECTURE
-
-class App {
+class Controller {
   #map;
   #mapPromise;
   #mapEvent;
@@ -47,6 +44,7 @@ class App {
       this.#formCl.optionsRenderHandler(this._cancelFunc.bind(this));
       this.#formCl.optionsRenderHandler(this._deleteAllWorkout.bind(this));
       this.#formCl.modalBtnsEventHandler(this._confirmDeleteWorkout.bind(this));
+      this.#formCl.sortTypeRenderHandler(this._sortWorkouts.bind(this));
     });
   }
 
@@ -69,8 +67,6 @@ class App {
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
-
-    // console.log(this.#mapEvent.latlng);
 
     // render workout on map as marker
     const { lat, lng } = this.#mapEvent.latlng;
@@ -153,8 +149,6 @@ class App {
       this.#workoutCl.workouts.push(workout);
       this.#formCl.renderPopup(workout, this.#marker);
     }
-
-    // console.log(this.#marker.getPopup());
 
     // Render workout on list
     const workoutHtml = this.#formCl.setRenderWorkout(workout);
@@ -265,10 +259,6 @@ class App {
     // show form
     this.#formCl.showForm(this.#workout);
 
-    // console.log(this.#marker.getPopup());
-
-    // console.log(this.#marker.getLatLng());
-
     // render correct input field
     this.#formCl.renderInputField(this.#workout);
 
@@ -305,15 +295,11 @@ class App {
     if (yesBtn && this.#deleteAll) {
       this.#workoutCl.workouts.length = 0;
       isWorkoutDeleted = true;
-
-      setTimeout(() => window.location.reload(), 250);
     }
 
     if (yesBtn && !this.#deleteAll) {
       this._removeOldWorkout();
       isWorkoutDeleted = true;
-
-      setTimeout(() => window.location.reload(), 250);
     } else {
       this.#deleteAll = false;
     }
@@ -321,6 +307,7 @@ class App {
     // set the updated workouts array to local storage
     if (isWorkoutDeleted) {
       this.#workoutCl.setLocalStorage();
+      setTimeout(() => window.location.reload(), 250);
     }
   }
 
@@ -362,8 +349,6 @@ class App {
   }
 
   _cancelEdit(editMode = true) {
-    // console.log(this.#workout, this.#workoutEl);
-
     if (!this.#workout && !this.#workoutEl) return;
 
     this.#formCl.optionsDefault(this.#workoutEl, editMode);
@@ -382,7 +367,7 @@ class App {
 
   _removeOldWorkout() {
     // find workout index and remove old workout object
-    const workoutsArr = this.#workouts;
+    const workoutsArr = this.#workoutCl.workouts;
     const index = workoutsArr.findIndex(work => work.id === this.#workout.id);
 
     if (this.#workoutEl.getAttribute('aria-selected') !== 'true') return;
@@ -393,10 +378,21 @@ class App {
     this.#workoutEl.remove();
   }
 
+  _sortWorkouts(e) {
+    const sortType = e.currentTarget.value;
+    console.log(sortType);
+
+    const workoutsDistance = this.#workouts.map(work => work.distance);
+
+    if (sortType === 'distance') {
+      console.log(workoutsDistance);
+    }
+  }
+
   reset() {
     localStorage.removeItem('workouts');
     location.reload();
   }
 }
 
-const app = new App();
+new Controller();

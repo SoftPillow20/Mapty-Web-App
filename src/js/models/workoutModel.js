@@ -3,7 +3,6 @@ export class Workout {
   id = (Date.now() + '').slice(-10);
   clicks = 0;
   workouts = [];
-  markers = [];
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
