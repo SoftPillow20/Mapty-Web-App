@@ -1,9 +1,9 @@
 import { Workout } from './models/workoutModel.js';
 import { Running } from './models/runningModel.js';
 import { Cycling } from './models/cyclingModel.js';
-import { Map } from './models/mapModel.js';
+import { MapModel } from './models/mapModel.js';
 import { renderMap } from './views/mapView.js';
-import { Form } from './views/formView.js';
+import { FormView } from './views/formView.js';
 
 class Controller {
   #map;
@@ -20,11 +20,13 @@ class Controller {
   #editMode = false;
 
   #workoutsType;
+  #sortType;
+  #sortedWorkouts;
 
   constructor() {
     // Initializes classes
-    this.#mapPromise = new Map().mapPromise;
-    this.#formCl = new Form();
+    this.#mapPromise = new MapModel().mapPromise;
+    this.#formCl = new FormView();
     this.#workoutCl = new Workout();
 
     // When map loads,
@@ -46,7 +48,7 @@ class Controller {
       this.#formCl.optionsRenderHandler(this._cancelFunc.bind(this));
       this.#formCl.optionsRenderHandler(this._deleteAllWorkout.bind(this));
       this.#formCl.modalBtnsEventHandler(this._confirmDeleteWorkout.bind(this));
-      this.#formCl.sortTypeRenderHandler(this._sortWorkouts.bind(this));
+      this.#formCl.sortTypeRenderHandler(this._getWorkoutsType.bind(this));
       this.#formCl.orderTypeRenderHandler(this._orderWorkouts.bind(this));
     });
   }
@@ -98,9 +100,7 @@ class Controller {
     this.#workouts.forEach(work => {
       this._loadWorkoutMarker(work);
       this.#formCl.renderPopup(work, this.#marker);
-      const workoutHtml = this.#formCl.setRenderWorkout(work);
-
-      this.#formCl.renderWorkoutOnForm(workoutHtml);
+      this.#formCl.renderWorkouts(work);
     });
   }
 
@@ -381,22 +381,26 @@ class Controller {
     this.#workoutEl.remove();
   }
 
-  _sortWorkouts(e) {
-    const sortType = e.currentTarget.value;
-    console.log(sortType);
+  _getWorkoutsType(e) {
+    this.#sortType = e.currentTarget.value;
+    console.log(this.#sortType);
+
+    if (this.#workouts.length === 0) {
+      this.#workouts = this.#workoutCl.workouts;
+    }
 
     this.#workoutsType = null;
     this.#formCl.orderType.value = '';
 
-    if (sortType === 'date') {
+    if (this.#sortType === 'date') {
       this.#workoutsType = this.#workouts.map(work => work.date);
     }
 
-    if (sortType === 'distance') {
+    if (this.#sortType === 'distance') {
       this.#workoutsType = this.#workouts.map(work => work.distance);
     }
 
-    if (sortType === 'duration') {
+    if (this.#sortType === 'duration') {
       this.#workoutsType = this.#workouts.map(work => work.duration);
     }
 
@@ -424,6 +428,34 @@ class Controller {
     }
 
     console.log(order);
+
+    this._sortWorkouts(order);
+  }
+
+  _sortWorkouts(orderArr) {
+    const mapWorkout = new Map();
+
+    console.log(this.#workouts);
+
+    for (const workout of this.#workouts) {
+      const work = workout[this.#sortType];
+      // console.log(work);
+      if (!mapWorkout.has(work)) mapWorkout.set(work, []);
+      mapWorkout.get(work).push(workout);
+    }
+
+    this.#sortedWorkouts = orderArr
+      .map(work => {
+        const w = mapWorkout.get(work);
+        return w ? w.shift() : undefined;
+      })
+      .filter(x => x !== undefined);
+
+    console.log(this.#sortedWorkouts);
+
+    this.#formCl.removeRenderedWorkouts();
+
+    this.#sortedWorkouts.forEach(work => this.#formCl.renderWorkouts(work));
   }
 
   reset() {

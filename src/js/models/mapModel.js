@@ -1,4 +1,4 @@
-export class Map {
+export class MapModel {
   mapPromise;
   mapZoomLevel = 13;
 

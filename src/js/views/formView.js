@@ -1,4 +1,4 @@
-export class Form {
+export class FormView {
   constructor() {
     this.form = document.querySelector('.form');
     this.mapModal = document.querySelector('.map__modal');
@@ -302,5 +302,15 @@ export class Form {
     const previewWorkout =
       this.containerWorkoutsPreview.querySelectorAll('.workout');
     previewWorkout.forEach(workoutHtml => workoutHtml.remove());
+  }
+
+  removeRenderedWorkouts() {
+    const previewWorkout = this.containerWorkouts.querySelectorAll('.workout');
+    previewWorkout.forEach(workoutHtml => workoutHtml.remove());
+  }
+
+  renderWorkouts(work) {
+    const workoutHtml = this.setRenderWorkout(work);
+    this.renderWorkoutOnForm(workoutHtml);
   }
 }
