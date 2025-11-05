@@ -383,11 +383,8 @@ class Controller {
 
   _getWorkoutsType(e) {
     this.#sortType = e.currentTarget.value;
-    console.log(this.#sortType);
 
-    if (this.#workouts.length === 0) {
-      this.#workouts = this.#workoutCl.workouts;
-    }
+    this.#workouts = this.#workoutCl.workouts;
 
     this.#workoutsType = null;
     this.#formCl.orderType.value = '';
@@ -403,15 +400,12 @@ class Controller {
     if (this.#sortType === 'duration') {
       this.#workoutsType = this.#workouts.map(work => work.duration);
     }
-
-    console.log(this.#workoutsType);
   }
 
   _orderWorkouts(e) {
     let orderType = e.currentTarget.value;
     const workouts = this.#workoutsType;
     let order = null;
-    console.log(orderType);
 
     if (!this.#workoutsType) {
       alert('Please select an option to sort.');
@@ -427,19 +421,14 @@ class Controller {
       order = workouts.toSorted((a, b) => b - a);
     }
 
-    console.log(order);
-
     this._sortWorkouts(order);
   }
 
   _sortWorkouts(orderArr) {
     const mapWorkout = new Map();
 
-    console.log(this.#workouts);
-
     for (const workout of this.#workouts) {
       const work = workout[this.#sortType];
-      // console.log(work);
       if (!mapWorkout.has(work)) mapWorkout.set(work, []);
       mapWorkout.get(work).push(workout);
     }
@@ -450,8 +439,6 @@ class Controller {
         return w ? w.shift() : undefined;
       })
       .filter(x => x !== undefined);
-
-    console.log(this.#sortedWorkouts);
 
     this.#formCl.removeRenderedWorkouts();
 
