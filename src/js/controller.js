@@ -413,12 +413,21 @@ class Controller {
       return;
     }
 
-    if (orderType === 'ascending') {
+    const isDates = this.#workoutsType.every(strDate => {
+      const date = new Date(strDate);
+      return !isNaN(date.getTime());
+    });
+
+    if (orderType === 'ascending' && !isDates) {
       order = workouts.toSorted((a, b) => a - b);
+    } else if (orderType === 'ascending' && isDates) {
+      order = workouts.toSorted((a, b) => new Date(a) - new Date(b));
     }
 
-    if (orderType === 'descending') {
+    if (orderType === 'descending' && !isDates) {
       order = workouts.toSorted((a, b) => b - a);
+    } else if (orderType === 'descending' && isDates) {
+      order = workouts.toSorted((a, b) => new Date(b) - new Date(a));
     }
 
     this._sortWorkouts(order);
