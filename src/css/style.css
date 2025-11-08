@@ -37,16 +37,20 @@ body {
   color: var(--color-light--2);
   font-weight: 400;
   line-height: 1.6;
+}
+
+main {
+  display: flex;
   height: 100vh;
   overscroll-behavior-y: none;
   background-color: #fff;
   padding: 2.5rem;
 
-  display: flex;
+  position: relative;
 }
 
 @media (max-width: 57em) {
-  body {
+  main {
     flex-direction: column;
   }
 }
@@ -57,7 +61,50 @@ a:visited {
   color: var(--color-brand--1);
 }
 
-/* MODAL DELETE */
+/* DISCLAIMER MODAL */
+
+.disclaimer__modal {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #fff;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disclaimer {
+  padding: 3rem;
+  border-radius: 11px;
+  background-color: #575d61;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.disclaimer > h1 {
+  text-align: center;
+  font-size: 3.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.disclaimer > p {
+  font-size: 1.8rem;
+  width: 60ch;
+  text-align: justify;
+  line-height: 1.6;
+}
+
+.disclaimer__btns {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
 
 /* SIDEBAR */
 .sidebar {

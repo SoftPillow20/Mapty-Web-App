@@ -30,99 +30,124 @@
     <title>mapty // Map your workouts</title>
   </head>
   <body>
-    <div class="sidebar">
-      <div class="sidebar__modal">
-        <h2>Permanently delete these workout?</h2>
-        <ul class="workouts__preview"></ul>
-        <div class="modal__btns">
-          <button class="modal__btn--yes margin-right--sm btn">✅ Yes</button>
-          <button class="modal__btn--no btn">❌ no</button>
-        </div>
-      </div>
-      <img src="src/img/logo.png" alt="Logo" class="logo" />
-
-      <ul class="workouts">
-        <form class="form hidden">
-          <div class="form__row">
-            <label class="form__label">Type</label>
-            <select class="form__input form__input--type">
-              <option value="running">Running</option>
-              <option value="cycling">Cycling</option>
-            </select>
-          </div>
-          <div class="form__row">
-            <label class="form__label">Distance</label>
-            <input class="form__input form__input--distance" placeholder="km" />
-          </div>
-          <div class="form__row">
-            <label class="form__label">Duration</label>
-            <input
-              class="form__input form__input--duration"
-              placeholder="min"
-            />
-          </div>
-          <div class="form__row">
-            <label class="form__label">Cadence</label>
-            <input
-              class="form__input form__input--cadence"
-              placeholder="step/min"
-            />
-          </div>
-          <div class="form__row form__row--hidden">
-            <label class="form__label">Elev Gain</label>
-            <input
-              class="form__input form__input--elevation"
-              placeholder="meters"
-            />
-          </div>
-          <button class="form__btn">OK</button>
-        </form>
-      </ul>
-
-      <div class="options hidden" aria-label="Option buttons">
-        <button class="options__edit btn">📝 edit</button>
-        <button class="options__delete btn">🚫 delete</button>
-        <button class="options__delete_all btn">🗑️ delete all</button>
-        <button class="options__cancel btn">⛔ cancel</button>
-      </div>
-      <div class="sort__container margin-bottom--sm">
-        <label class="options__sort" for="sort">sort workouts</label>
-        <select name="sort" id="sort" class="form__input sort__type sort">
-          <option value="">options</option>
-          <option value="date">date</option>
-          <option value="distance">distance</option>
-          <option value="duration">duration</option>
-        </select>
-        <label class="options__sort" for="order">order</label>
-        <select name="order" id="order" class="form__input order__type sort">
-          <option value=""></option>
-          <option value="ascending">ascending</option>
-          <option value="descending">descending</option>
-        </select>
-      </div>
-
-      <p class="copyright">
-        &copy; Copyright by
-        <a
-          class="twitter-link"
-          target="_blank"
-          href="https://twitter.com/jonasschmedtman"
-          >Jonas Schmedtmann</a
-        >. Use for learning or your portfolio. Don't use to teach. Don't claim
-        as your own.
-      </p>
-    </div>
-
-    <div id="map">
-      <div class="map__modal">
-        <div class="modal__card">
-          <h2>You are in edit mode!</h2>
+    <main>
+      <div class="disclaimer__modal">
+        <div class="disclaimer">
+          <h1>Hello Users👋</h1>
           <p>
-            Remember to <strong>click cancel</strong> before adding another
-            workout 😉.
+            Mapty needs access to your device location so the map and markers
+            work correctly.
+            <strong>
+              Your location and any workout data you create are not uploaded to
+              a server
+            </strong>
+            — they are stored only in your browser (localStorage). You can
+            remove them at any time.
           </p>
+          <div class="disclaimer__btns">
+            <button class="allow btn">Allow access ✅</button>
+
+            <button class="deny btn">Deny access ❌</button>
+          </div>
         </div>
       </div>
-    </div>
+      <div class="sidebar">
+        <div class="sidebar__modal">
+          <h2>Permanently delete these workout?</h2>
+          <ul class="workouts__preview"></ul>
+          <div class="modal__btns">
+            <button class="modal__btn--yes margin-right--sm btn">✅ Yes</button>
+            <button class="modal__btn--no btn">❌ no</button>
+          </div>
+        </div>
+        <img src="src/img/logo.png" alt="Logo" class="logo" />
+
+        <ul class="workouts">
+          <form class="form hidden">
+            <div class="form__row">
+              <label class="form__label">Type</label>
+              <select class="form__input form__input--type">
+                <option value="running">Running</option>
+                <option value="cycling">Cycling</option>
+              </select>
+            </div>
+            <div class="form__row">
+              <label class="form__label">Distance</label>
+              <input
+                class="form__input form__input--distance"
+                placeholder="km"
+              />
+            </div>
+            <div class="form__row">
+              <label class="form__label">Duration</label>
+              <input
+                class="form__input form__input--duration"
+                placeholder="min"
+              />
+            </div>
+            <div class="form__row">
+              <label class="form__label">Cadence</label>
+              <input
+                class="form__input form__input--cadence"
+                placeholder="step/min"
+              />
+            </div>
+            <div class="form__row form__row--hidden">
+              <label class="form__label">Elev Gain</label>
+              <input
+                class="form__input form__input--elevation"
+                placeholder="meters"
+              />
+            </div>
+            <button class="form__btn">OK</button>
+          </form>
+        </ul>
+
+        <div class="options hidden" aria-label="Option buttons">
+          <button class="options__edit btn">📝 edit</button>
+          <button class="options__delete btn">🚫 delete</button>
+          <button class="options__delete_all btn">🗑️ delete all</button>
+          <button class="options__cancel btn">⛔ cancel</button>
+        </div>
+        <div class="sort__container margin-bottom--sm">
+          <label class="options__sort" for="sort">sort workouts</label>
+          <select name="sort" id="sort" class="form__input sort__type sort">
+            <option value="">options</option>
+            <option value="date">date</option>
+            <option value="distance">distance</option>
+            <option value="duration">duration</option>
+          </select>
+          <label class="options__sort" for="order">order</label>
+          <select name="order" id="order" class="form__input order__type sort">
+            <option value=""></option>
+            <option value="ascending">ascending</option>
+            <option value="descending">descending</option>
+          </select>
+        </div>
+
+        <p class="copyright">
+          &copy; Copyright by
+          <a
+            class="twitter-link"
+            target="_blank"
+            href="https://twitter.com/jonasschmedtman"
+            >Jonas Schmedtmann</a
+          >. Use for learning or your portfolio. Don't use to teach. Don't claim
+          as your own.
+        </p>
+      </div>
+
+      <div id="map">
+        <div class="map__modal">
+          <div class="modal__card">
+            <h2>You are in edit mode!</h2>
+            <p>
+              Remember to <strong>click cancel</strong> before adding another
+              workout 😉.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
   </body>
 </html>
