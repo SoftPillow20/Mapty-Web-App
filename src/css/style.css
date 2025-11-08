@@ -26,12 +26,6 @@ html {
   }
 }
 
-@media (max-width: 37em) {
-  html {
-    font-size: 43.75%;
-  }
-}
-
 body {
   font-family: 'Manrope', sans-serif;
   color: var(--color-light--2);
@@ -52,6 +46,12 @@ main {
 @media (max-width: 57em) {
   main {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 37em) {
+  main {
+    padding: 0;
   }
 }
 
@@ -141,7 +141,7 @@ a:visited {
 
 @media (max-width: 37em) {
   .sidebar {
-    padding-inline: 3.5rem;
+    padding-inline: 2.5rem;
   }
 }
 
