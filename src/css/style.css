@@ -33,6 +33,12 @@ body {
   display: flex;
 }
 
+@media (max-width: 57em) {
+  body {
+    flex-direction: column;
+  }
+}
+
 /* GENERAL */
 a:link,
 a:visited {
@@ -49,6 +55,13 @@ a:visited {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+@media (max-width: 57em) {
+  .sidebar {
+    height: 50%;
+    padding-inline: 7rem;
+  }
 }
 
 .sidebar > .sidebar__modal {
@@ -236,6 +249,12 @@ a:visited {
   transition: opacity 0.8s;
 }
 
+@media (max-height: 57em) {
+  .options {
+    justify-content: center;
+  }
+}
+
 .options.hidden > *:not(.options__cancel),
 .options.hidden > .options__cancel {
   opacity: 0;
@@ -258,6 +277,12 @@ a:visited {
   align-items: center;
   gap: 1rem;
   font-size: 1.6rem;
+}
+
+@media (max-width: 57em) {
+  .sort__container {
+    font-size: 1.4rem;
+  }
 }
 
 .sort {
@@ -319,8 +344,10 @@ a:visited {
 /* MAP */
 #map {
   position: relative;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   height: 100%;
+  width: 100%;
   background-color: var(--color-light--1);
 }
 
