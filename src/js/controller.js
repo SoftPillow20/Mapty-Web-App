@@ -7,7 +7,7 @@ import { FormView } from './views/formView.js';
 
 class Controller {
   #map;
-  #mapPromise;
+  #mapCl;
   #mapEvent;
   #marker;
   #zoomLevelSelected = 16;
@@ -23,9 +23,11 @@ class Controller {
   #sortType;
   #sortedWorkouts;
 
+  #permission;
+
   constructor() {
     // Initializes classes
-    this.#mapPromise = new MapModel().mapPromise;
+    this.#mapCl = new MapModel();
     this.#formCl = new FormView();
     this.#workoutCl = new Workout();
 
@@ -56,7 +58,9 @@ class Controller {
   // Load the map (asynchronously)
   async _loadMap() {
     try {
-      this.#map = await this.#mapPromise;
+      this.#permission = await this._getPermissionLocation();
+
+      this.#map = await this.#mapCl.getPosition(this.#permission);
 
       if (!this.#map)
         throw new Error('Something went wrong. Please try again later');
@@ -68,6 +72,53 @@ class Controller {
     } catch (err) {
       console.error(err);
     }
+  }
+
+  // Needs refactoring
+  _getPermissionLocation(timeoutMs = 30000) {
+    return new Promise(resolve => {
+      const allowBtn = document.querySelector('.allow');
+      const denyBtn = document.querySelector('.deny');
+      const modal = document.querySelector('.disclaimer__modal');
+
+      if (!allowBtn || !denyBtn) {
+        // If controls not found, default to deny for safety
+        resolve(false);
+        return;
+      }
+
+      // Handlers
+      const onAllow = e => {
+        cleanup();
+        resolve(true);
+      };
+      const onDeny = e => {
+        cleanup();
+        resolve(false);
+      };
+
+      // Cleanup function to remove listeners and hide modal if needed
+      const cleanup = () => {
+        allowBtn.removeEventListener('click', onAllow);
+        denyBtn.removeEventListener('click', onDeny);
+        if (modal) modal.classList.add('hidden'); // or hide modal in your UI
+        // if you used a toast or aria-live, update it here
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+
+      // Add listeners
+      allowBtn.addEventListener('click', onAllow);
+      denyBtn.addEventListener('click', onDeny);
+
+      // Optional: fallback if user doesn't respond after X ms -> treat as deny
+      const timeoutId = setTimeout(() => {
+        cleanup();
+        resolve(false);
+      }, timeoutMs);
+
+      // Optionally show the modal
+      if (modal) modal.classList.remove('hidden');
+    });
   }
 
   _showForm(mapE) {

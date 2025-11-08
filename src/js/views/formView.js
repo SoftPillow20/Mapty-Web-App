@@ -3,6 +3,8 @@ export class FormView {
     this.form = document.querySelector('.form');
     this.mapModal = document.querySelector('.map__modal');
     this.sidebarModal = document.querySelector('.sidebar__modal');
+    this.disclaimerModal = document.querySelector('.disclaimer__modal');
+    this.disclaimerBtns = document.querySelector('.disclaimer__btns');
     this.modalBtns = document.querySelector('.modal__btns');
     this.containerWorkouts = document.querySelector('.workouts');
     this.containerWorkoutsPreview =

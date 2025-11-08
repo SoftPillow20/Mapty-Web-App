@@ -78,6 +78,10 @@ a:visited {
   justify-content: center;
 }
 
+.disclaimer__modal.hidden {
+  display: none;
+}
+
 .disclaimer {
   padding: 3rem;
   border-radius: 11px;
@@ -103,7 +107,19 @@ a:visited {
 .disclaimer__btns {
   display: flex;
   gap: 2rem;
+  margin-top: 2.6rem;
   justify-content: center;
+}
+
+@media (max-width: 57em) {
+  .disclaimer {
+    width: 80%;
+  }
+
+  .disclaimer > p {
+    width: 100%;
+    line-height: 1.8;
+  }
 }
 
 /* SIDEBAR */
